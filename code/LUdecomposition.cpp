@@ -3,6 +3,7 @@
 #include <iostream>
 #include <armadillo>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 using namespace arma;
@@ -21,7 +22,19 @@ namespace NLA
             {
                 mat L;
                 mat U;
+                mat P;
+                mat Q;
             };
+
+            namespace pivoting
+            {
+                enum _pivoting
+                {
+                    NO_PIVOTING,
+                    PARTIAL_PIVOTING,
+                    FULL_PIVOTING
+                };
+            }
 
             LUcalc doolittle( const mat &A )
             {
@@ -139,7 +152,7 @@ namespace NLA
                 return _res;
             }
 
-            LUcalc gaussian( const mat &A )
+            LUcalc gaussian( const mat &A, pivoting::_pivoting pPivoting = pivoting::NO_PIVOTING )
             {
                 assert( A.n_cols == A.n_rows );
 
@@ -154,8 +167,11 @@ namespace NLA
                 }
 
                 // Set the initial state of the matrices to be calculated
-                arma::mat _L = arma::eye<arma::mat>( A.n_rows, A.n_cols );
+                arma::mat _L = arma::zeros<arma::mat>( A.n_rows, A.n_cols );
                 arma::mat _U = A;
+                arma::mat _P = arma::eye<arma::mat>( A.n_rows, A.n_cols );
+                arma::mat _Q = arma::eye<arma::mat>( A.n_rows, A.n_cols );
+
                 arma::mat _Ak = A;
                 arma::mat _Ek = arma::eye<arma::mat>( A.n_rows, A.n_cols );
 
@@ -165,6 +181,44 @@ namespace NLA
                     for( int p = 0; p <= q; p++ )
                     {
                         _mk[p] = 0;
+                    }
+
+                    int _row_pivot_indx = q;// First, element q,q
+                    if ( pPivoting == pivoting::PARTIAL_PIVOTING )
+                    {
+                        // Find the index of the biggest pivot
+                        for ( int p = q + 1; p < N; p++ )
+                        {
+                            if ( abs( _Ak( _row_pivot_indx, q ) ) < abs( _Ak( p, q ) ) )
+                            {
+                                _row_pivot_indx = p;
+                            }
+                        }
+
+                        if ( _Ak( _row_pivot_indx, q ) == 0 )
+                        {
+                            cout << "pivot is 0, danger!" << endl;
+                        }
+                        else
+                        {
+                            cout << "changed: " << _row_pivot_indx << " - " << q << endl;
+                        }
+
+                        // exchange rows in Ak and P
+                        for ( int s = 0; s < N; s++ )
+                        {
+                            if ( s >= q )
+                            {
+                                double _tmp = _Ak( _row_pivot_indx, s );
+                                _Ak( _row_pivot_indx, s ) = _Ak( q, s );
+                                _Ak( q, s ) = _tmp;
+                            }
+
+                            double _tmp = _P( _row_pivot_indx, s );
+                            _P( _row_pivot_indx, s ) = _P( q, s );
+                            _P( q, s ) = _tmp;
+                        }
+
                     }
 
                     // initialize the other elements of mk with multipliers from Ak
@@ -181,7 +235,6 @@ namespace NLA
                         // populate L with this column of multipliers
                         // L = I - mk*ek^t, fill column k = q of L, from row p to N - 1
                         _L( p, q ) = -_mk[p];
-                        
                         // Generate A(k+1) = Ek * Ak
 
                         // Eliminate the elements in column k accordingly
@@ -198,12 +251,45 @@ namespace NLA
                 // U = A(N-1)
                 _U = _Ak;
 
-                _res.L = _L;
+                _res.L = _L + arma::eye<arma::mat>( N, N );
                 _res.U = _U;
+                _res.P = _P;
+                _res.Q = _Q;
 
                 return _res;
             }
-            
+
+            arma::mat cholesky( const mat &A )
+            {
+                assert( A.n_cols == A.n_rows );
+
+                int N = A.n_cols;
+
+                arma::mat _H = arma::zeros<mat>( N, N );
+
+                for ( int p = 0; p < N; p++ )
+                {
+                    double _sum = 0;
+                    for ( int k = 0; k <= p - 1; k++ )
+                    {
+                        _sum += ( _H( p, k ) * _H( p, k ) );
+                    }
+                    _H( p, p ) = sqrt( A( p, p ) - _sum );
+
+                    for ( int q = p + 1; q < N; q++ )
+                    {
+                        double _sum = 0;
+                        for ( int k = 0; k <= p - 1; k++ )
+                        {
+                            _sum += ( _H( q, k ) * _H( p, k ) );
+                        }
+                        _H( q, p ) = ( A( q, p ) - _sum ) / _H( p, p );
+                    }
+                }
+
+                return _H;
+            }
+
         }
     }
 
@@ -223,14 +309,38 @@ int main()
     cout << "matrix A: " << endl;
     cout << A << endl;
 
-    cout << "LU-Gaussian decomposition: --------------------------------" << endl;
+    cout << "LU-Gaussian decomposition: ------------------------------------" << endl;
     NLA::decompositions::lu::LUcalc _res = NLA::decompositions::lu::gaussian( A );
     cout << "L: " << endl;
     cout << _res.L << endl;
     cout << "U: " << endl;
     cout << _res.U << endl;
 
-    cout << "LU-Crout decomposition: -----------------------------------" << endl;
+    cout << "LU-Gaussian decomposition / partial pivoting: -----------------" << endl;
+    //arma::mat S = { { 0,  1,  1 },
+    //                { 2,  2,  3 },
+    //                { 1,  2,  1 } };
+    arma::mat S = { { 2,  1,  1,  0 },
+                    { 4,  3,  3,  1 },
+                    { 8,  7,  9,  5 },
+                    { 6,  7,  9,  8 } };
+    _res = NLA::decompositions::lu::gaussian( S, NLA::decompositions::lu::pivoting::PARTIAL_PIVOTING );
+    cout << "matrix: " << endl;
+    cout << S << endl;
+    cout << "L: " << endl;
+    cout << _res.L << endl;
+    cout << "U: " << endl;
+    cout << _res.U << endl;
+    cout << "P: " << endl;
+    cout << _res.P << endl;
+
+    cout << "check: " << endl;
+    cout << "PS: " << endl;
+    cout << _res.P * S << endl;
+    cout << "LU: " << endl;
+    cout << _res.L * _res.U << endl;
+
+    cout << "LU-Crout decomposition: ---------------------------------------" << endl;
     _res = NLA::decompositions::lu::crout( A );
     cout << "L: " << endl;
     cout << _res.L << endl;
@@ -243,6 +353,15 @@ int main()
     cout << _res.L << endl;
     cout << "U: " << endl;
     cout << _res.U << endl;
+
+    cout << "Cholesky decomposition: ---------------------------------------" << endl;
+    arma::mat B = arma::randu<arma::mat>( 4, 4 );
+    arma::mat C = B.t() * B;
+    arma::mat _h = NLA::decompositions::lu::cholesky( C );
+    cout << "H: " << endl;
+    cout << _h << endl;
+    cout << "H-arma: " << endl;
+    cout << arma::chol( C, "lower" ) << endl;
 
 
     return 0;
