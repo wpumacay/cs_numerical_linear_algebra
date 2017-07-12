@@ -1,23 +1,19 @@
 
-#include <cassert>
-#include <iostream>
-#include <armadillo>
-#include <vector>
-#include <cmath>
+
+#pragma once
+
+#include "nla.h"
 
 using namespace std;
 using namespace arma;
 
 namespace NLA
 {
-
-
     namespace decompositions
     {
-
         namespace lu
         {
-            
+
             struct LUcalc
             {
                 mat L;
@@ -152,6 +148,37 @@ namespace NLA
                 return _res;
             }
 
+            arma::mat cholesky( const mat &A )
+            {
+                assert( A.n_cols == A.n_rows );
+
+                int N = A.n_cols;
+
+                arma::mat _H = arma::zeros<mat>( N, N );
+
+                for ( int p = 0; p < N; p++ )
+                {
+                    double _sum = 0;
+                    for ( int k = 0; k <= p - 1; k++ )
+                    {
+                        _sum += ( _H( p, k ) * _H( p, k ) );
+                    }
+                    _H( p, p ) = sqrt( A( p, p ) - _sum );
+
+                    for ( int q = p + 1; q < N; q++ )
+                    {
+                        double _sum = 0;
+                        for ( int k = 0; k <= p - 1; k++ )
+                        {
+                            _sum += ( _H( q, k ) * _H( p, k ) );
+                        }
+                        _H( q, p ) = ( A( q, p ) - _sum ) / _H( p, p );
+                    }
+                }
+
+                return _H;
+            }
+
             LUcalc gaussian( const mat &A, pivoting::_pivoting pPivoting = pivoting::NO_PIVOTING )
             {
                 assert( A.n_cols == A.n_rows );
@@ -259,110 +286,6 @@ namespace NLA
                 return _res;
             }
 
-            arma::mat cholesky( const mat &A )
-            {
-                assert( A.n_cols == A.n_rows );
-
-                int N = A.n_cols;
-
-                arma::mat _H = arma::zeros<mat>( N, N );
-
-                for ( int p = 0; p < N; p++ )
-                {
-                    double _sum = 0;
-                    for ( int k = 0; k <= p - 1; k++ )
-                    {
-                        _sum += ( _H( p, k ) * _H( p, k ) );
-                    }
-                    _H( p, p ) = sqrt( A( p, p ) - _sum );
-
-                    for ( int q = p + 1; q < N; q++ )
-                    {
-                        double _sum = 0;
-                        for ( int k = 0; k <= p - 1; k++ )
-                        {
-                            _sum += ( _H( q, k ) * _H( p, k ) );
-                        }
-                        _H( q, p ) = ( A( q, p ) - _sum ) / _H( p, p );
-                    }
-                }
-
-                return _H;
-            }
-
         }
     }
-
-}
-
-
-
-
-int main()
-{
-
-    arma::mat A = { { 1,  5,  0,  0 },
-                    { 2, 12,  5,  0 },
-                    { 0,  4, 13,  5 },
-                    { 0,  0,  6, 11 } };
-
-    cout << "matrix A: " << endl;
-    cout << A << endl;
-
-    cout << "LU-Gaussian decomposition: ------------------------------------" << endl;
-    NLA::decompositions::lu::LUcalc _res = NLA::decompositions::lu::gaussian( A );
-    cout << "L: " << endl;
-    cout << _res.L << endl;
-    cout << "U: " << endl;
-    cout << _res.U << endl;
-
-    cout << "LU-Gaussian decomposition / partial pivoting: -----------------" << endl;
-    //arma::mat S = { { 0,  1,  1 },
-    //                { 2,  2,  3 },
-    //                { 1,  2,  1 } };
-    arma::mat S = { { 2,  1,  1,  0 },
-                    { 4,  3,  3,  1 },
-                    { 8,  7,  9,  5 },
-                    { 6,  7,  9,  8 } };
-    _res = NLA::decompositions::lu::gaussian( S, NLA::decompositions::lu::pivoting::PARTIAL_PIVOTING );
-    cout << "matrix: " << endl;
-    cout << S << endl;
-    cout << "L: " << endl;
-    cout << _res.L << endl;
-    cout << "U: " << endl;
-    cout << _res.U << endl;
-    cout << "P: " << endl;
-    cout << _res.P << endl;
-
-    cout << "check: " << endl;
-    cout << "PS: " << endl;
-    cout << _res.P * S << endl;
-    cout << "LU: " << endl;
-    cout << _res.L * _res.U << endl;
-
-    cout << "LU-Crout decomposition: ---------------------------------------" << endl;
-    _res = NLA::decompositions::lu::crout( A );
-    cout << "L: " << endl;
-    cout << _res.L << endl;
-    cout << "U: " << endl;
-    cout << _res.U << endl;
-
-    cout << "LU-Doolittle decomposition: -----------------------------------" << endl;
-    _res = NLA::decompositions::lu::doolittle( A );
-    cout << "L: " << endl;
-    cout << _res.L << endl;
-    cout << "U: " << endl;
-    cout << _res.U << endl;
-
-    cout << "Cholesky decomposition: ---------------------------------------" << endl;
-    arma::mat B = arma::randu<arma::mat>( 4, 4 );
-    arma::mat C = B.t() * B;
-    arma::mat _h = NLA::decompositions::lu::cholesky( C );
-    cout << "H: " << endl;
-    cout << _h << endl;
-    cout << "H-arma: " << endl;
-    cout << arma::chol( C, "lower" ) << endl;
-
-
-    return 0;
 }
