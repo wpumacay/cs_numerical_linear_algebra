@@ -6,7 +6,7 @@ close all
 % Assume that the points are written to a file in a round like order ...
 % like -> lastPoint_boundary_i = firstPoint_boundary_i+1
 
-fileHandle = fopen( 'geometry_4.txt', 'r' );
+fileHandle = fopen( 'geometry_2_3.txt', 'r' );
 
 % Read four boundaries
 for q = 1 : 4
@@ -188,10 +188,6 @@ for i = 2 : Nn
            ( 1 - n ) * ( 1 - e ) * yb_0 - ( 1 - e ) * n * yt_0 - ...
            ( 1 - n ) * e * yb_1 - n * e * yt_1;
        
-       if x > 1
-           disp( '???' )
-       end
-       
        xx_g( i - 1, j - 1 ) = x; yy_g( i - 1, j - 1 ) = y;
        
    end
@@ -199,7 +195,7 @@ for i = 2 : Nn
 end
 
 figure(1)
-axis( [0,1,0,1] )
+axis( [-2,2,-2,2] )
 hold on
 
 for s = 1 : 4
@@ -216,6 +212,36 @@ for i = 1 : size( xx_g, 1 )
     
 end
 
+plotGrid( xx_g, yy_g ) 
 
+function plotGrid( xg, yg )
+
+    for i = 1 : size( xg, 1 ) 
+       
+        for j = 1 : size( xg, 2 )
+           
+            if i > 1
+                plot( [ xg( i - 1, j ), xg( i, j ) ], ...
+                      [ yg( i - 1, j ), yg( i, j ) ], 'k' );
+            end
+            if j > 1
+                plot( [ xg( i, j - 1 ), xg( i, j ) ], ...
+                      [ yg( i, j - 1 ), yg( i, j ) ], 'k' );
+            end
+            
+            if i < size( xg, 1 )
+                plot( [ xg( i + 1, j ), xg( i, j ) ], ...
+                      [ yg( i + 1, j ), yg( i, j ) ], 'k' );
+            end
+            if j < size( xg, 2 )
+                plot( [ xg( i, j + 1 ), xg( i, j ) ], ...
+                      [ yg( i, j + 1 ), yg( i, j ) ], 'k' );
+            end
+            
+        end
+        
+    end
+
+end
 
 
