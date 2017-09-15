@@ -37,13 +37,13 @@ for q = 1 : 4
     b_size = size( boundaries( q ).xx );
     len_i = b_size( 2 );
     
-    boundaries( q ).xx( 1, end + 1 ) = ...
-        boundaries( rem( q , 4 ) + 1 ).xx( 1, 1 );
+%     boundaries( q ).xx( 1, end + 1 ) = ...
+%         boundaries( rem( q , 4 ) + 1 ).xx( 1, 1 );
+%     
+%     boundaries( q ).yy( 1, end + 1 ) = ...
+%         boundaries( rem( q , 4 ) + 1 ).yy( 1, 1 );
     
-    boundaries( q ).yy( 1, end + 1 ) = ...
-        boundaries( rem( q , 4 ) + 1 ).yy( 1, 1 );
-    
-    boundaries( q ).size = len_i + 1;
+    boundaries( q ).size = len_i;
 end
 
 % correct the direction of the boundaries 
@@ -92,12 +92,12 @@ dn = 1 / Nn;
 ee = linspace( 0, 1, Ne + 1 );
 nn = linspace( 0, 1, Nn + 1 );
 
-xx_g = zeros( Nn - 1, Ne - 1 );
-yy_g = zeros( Nn - 1, Ne - 1 );
+xx_g = zeros( Nn + 1, Ne + 1 );
+yy_g = zeros( Nn + 1, Ne + 1 );
 
-for i = 2 : Nn
+for i = 1 : ( Nn + 1 )
     
-   for j = 2 : Ne 
+   for j = 1 : ( Ne + 1 )
       
        e = ee( j );
        n = nn( i );
@@ -111,7 +111,14 @@ for i = 2 : Nn
            b_d = 1 / n_segments;
            
            indxs_e( s ) = floor( e / b_d ) + 1;
+           if indxs_e( s ) > n_segments
+               indxs_e( s ) = n_segments;
+           end
+           
            indxs_n( s ) = floor( n / b_d ) + 1;
+           if indxs_n( s ) > n_segments
+               indxs_n( s ) = n_segments;
+           end
        end
       
        xl = 0; yl = 0;
@@ -188,7 +195,7 @@ for i = 2 : Nn
            ( 1 - n ) * ( 1 - e ) * yb_0 - ( 1 - e ) * n * yt_0 - ...
            ( 1 - n ) * e * yb_1 - n * e * yt_1;
        
-       xx_g( i - 1, j - 1 ) = x; yy_g( i - 1, j - 1 ) = y;
+       xx_g( i, j ) = x; yy_g( i, j ) = y;
        
    end
     
