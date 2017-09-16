@@ -83,8 +83,8 @@ for q = 1 : 4
 end
 
 % define grid dimensions ( xi=e, eta=n )
-Ne = 20;
-Nn = 20;
+Ne = 10;
+Nn = 10;
 
 de = 1 / Ne;
 dn = 1 / Nn;

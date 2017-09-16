@@ -12,7 +12,7 @@ boundaries(2).xx = []; boundaries(2).yy = [];
 boundaries(3).xx = []; boundaries(3).yy = [];
 boundaries(4).xx = []; boundaries(4).yy = [];
 
-option = input( 'geometry? (1:square-hole) (2:circle-hole) (3:circle) ' );
+option = input( 'geometry? (1:square-hole) (2:circle-hole) (3:circle) (4:square)' );
 
 switch option
     
@@ -81,6 +81,21 @@ switch option
         theta = linspace( 0.5 * pi, pi, N );
         boundaries(4).xx = [ boundaries(4).xx, r * cos( theta ) ];
         boundaries(4).yy = [ boundaries(4).yy, r * sin( theta ) ];
+        
+    case 4
+        
+        N = 20;
+        boundaries(1).xx = [ boundaries(1).xx, zeros( 1, N ) ];
+        boundaries(1).yy = [ boundaries(1).yy, linspace( 1, 0, N ) ];
+        
+        boundaries(2).xx = [ boundaries(2).xx, linspace( 0, 1, N ) ];
+        boundaries(2).yy = [ boundaries(2).yy, zeros( 1, N ) ];
+        
+        boundaries(3).xx = [ boundaries(3).xx, ones( 1, N ) ];
+        boundaries(3).yy = [ boundaries(3).yy, linspace( 0, 1, N ) ];
+        
+        boundaries(4).xx = [ boundaries(4).xx, linspace( 1, 0, N ) ];
+        boundaries(4).yy = [ boundaries(4).yy, ones( 1, N ) ];
 end
 
 fg = figure(1);
