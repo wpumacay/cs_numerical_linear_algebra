@@ -6,7 +6,7 @@ close all
 % Assume that the points are written to a file in a round like order ...
 % like -> lastPoint_boundary_i = firstPoint_boundary_i+1
 
-fileHandle = fopen( 'geometry_2_3.txt', 'r' );
+fileHandle = fopen( 'geometry_2_1.txt', 'r' );
 
 % Read four boundaries
 for q = 1 : 4
@@ -83,8 +83,8 @@ for q = 1 : 4
 end
 
 % define grid dimensions ( xi=e, eta=n )
-Ne = 10;
-Nn = 10;
+Ne = 11;
+Nn = 11;
 
 de = 1 / Ne;
 dn = 1 / Nn;
@@ -95,12 +95,12 @@ nn = linspace( 0, 1, Nn + 1 );
 xx_g = zeros( Nn + 1, Ne + 1 );
 yy_g = zeros( Nn + 1, Ne + 1 );
 
-for i = 1 : ( Nn + 1 )
+for i = 1 : ( Ne + 1 )
     
-   for j = 1 : ( Ne + 1 )
+   for j = 1 : ( Nn + 1 )
       
-       e = ee( j );
-       n = nn( i );
+       e = ee( i );
+       n = nn( j );
        
        indxs_e = zeros( 1, 4 );
        indxs_n = zeros( 1, 4 );
@@ -202,12 +202,9 @@ for i = 1 : ( Nn + 1 )
 end
 
 figure(1)
-axis( [-2,2,-2,2] )
+%axis( [-1,1,-1,1] )
+axis auto
 hold on
-
-for s = 1 : 4
-    plot( boundaries( s ).xx, boundaries( s ).yy, 'b' )
-end
 
 for i = 1 : size( xx_g, 1 )
    
@@ -220,6 +217,10 @@ for i = 1 : size( xx_g, 1 )
 end
 
 plotGrid( xx_g, yy_g ) 
+
+for s = 1 : 4
+    plot( boundaries( s ).xx, boundaries( s ).yy, 'b' )
+end
 
 function plotGrid( xg, yg )
 

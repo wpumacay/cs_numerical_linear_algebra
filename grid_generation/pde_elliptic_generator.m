@@ -3,6 +3,8 @@ disp( 'running algebraic generator' );
 alg_geometry_loader;
 disp( 'finished running algebraic generator' );
 
+pause
+
 sz_i = size( xx_g, 1 );
 sz_j = size( xx_g, 2 );
 
@@ -10,7 +12,7 @@ grid_sz_i = sz_i - 2;
 grid_sz_j = sz_j - 2;
 
 
-Niter = 1;
+Niter = 10;
 
 for k = 1 : Niter
    
@@ -36,7 +38,8 @@ for k = 1 : Niter
     
     
     clf
-    axis( [-2,2,-2,2] )
+    %axis( [-1,1,-1,1] )
+    axis auto
     hold on
     
     for s = 1 : 4
@@ -44,6 +47,11 @@ for k = 1 : Niter
     end
     
     plotGrid( xx_g, yy_g )
+    
+    disp( 'iter: ' )
+    disp( k )
+    
+    pause
 end
 
 % everything has an offset of 2, because of the boundary conditions
@@ -65,73 +73,102 @@ function g = c_gamma( xg, yg, i, j )
                  ( yg( i + 2, j + 1 ) - yg( i, j + 1 ) ) ^ 2 );
 end
 
-function indx = getIndxInMatrix( i, j, ~, gSz_j )
-    indx = j + ( i - 1 ) * gSz_j;
+function indx = getIndxInMatrix( i, j, gSz_i, ~ )
+    indx = i + ( j - 1 ) * gSz_i;
 end
 
-function valBoundary = getBoundaryConditionX( xg, yg, i, j, gSz_i, gSz_j )
+function valBoundary = getBoundaryConditionX( xg, yg, i, j, in, jn, gSz_i, gSz_j )
 
-    if i == 0 % in bottom border
+    di = in - i;
+    dj = jn - j;
+
+    if di == 1 && dj == 1
+
+        valBoundary =  -0.5 * c_beta( xg, yg, i, j ) * xg( in + 1, jn + 1 );
+
+    elseif di == 1 && dj == 0
+
+        valBoundary =        c_alpha( xg, yg, i, j ) * xg( in + 1, jn + 1 );
+
+    elseif di == 1 && dj == -1
+
+        valBoundary =   0.5 * c_beta( xg, yg, i, j ) * xg( in + 1, jn + 1 );
+
+    elseif di == 0 && dj == -1
+
+        valBoundary =        c_gamma( xg, yg, i, j ) * xg( in + 1, jn + 1 );
+
+    elseif di == -1 && dj == -1
+
+        valBoundary = -0.5 * c_beta( xg, yg, i , j ) * xg( in + 1, jn + 1 );
+
+    elseif di == -1 && dj == 0
+
+        valBoundary =        c_alpha( xg, yg, i, j ) * xg( in + 1, jn + 1 );
+
+    elseif di == -1 && dj == 1
+
+        valBoundary =   0.5 * c_beta( xg, yg, i, j ) * xg( in + 1, jn + 1 );
+
+    elseif di == 0 && dj == 1
+
+        valBoundary =        c_gamma( xg, yg, i, j ) * xg( in + 1, jn + 1 );
+
+    else 
+        disp( 'shouldnt get here ' );
+    end
+
+
+end
+
+function valBoundary = getBoundaryConditionY( xg, yg, i, j, in, jn, gSz_i, gSz_j )
+
+    di = in - i;
+    dj = jn - j;
+
+    if di == 1 && dj == 1
+
+        valBoundary =  -0.5 * c_beta( xg, yg, i, j ) * yg( in + 1, jn + 1 );
+
+    elseif di == 1 && dj == 0
+
+        valBoundary =        c_alpha( xg, yg, i, j ) * yg( in + 1, jn + 1 );
+
+    elseif di == 1 && dj == -1
+
+        valBoundary =   0.5 * c_beta( xg, yg, i, j ) * yg( in + 1, jn + 1 );
+
+    elseif di == 0 && dj == -1
+
+        valBoundary =        c_gamma( xg, yg, i, j ) * yg( in + 1, jn + 1 );
+
+    elseif di == -1 && dj == -1
+
+        valBoundary = -0.5 * c_beta( xg, yg, i , j ) * yg( in + 1, jn + 1 );
+
+    elseif di == -1 && dj == 0
+
+        valBoundary =        c_alpha( xg, yg, i, j ) * yg( in + 1, jn + 1 );
+
+    elseif di == -1 && dj == 1
+
+        valBoundary =   0.5 * c_beta( xg, yg, i, j ) * yg( in + 1, jn + 1 );
+
+    elseif di == 0 && dj == 1
+
+        valBoundary =        c_gamma( xg, yg, i, j ) * yg( in + 1, jn + 1 );
         
-        if j == 0 % bottom left corner
-            valBoundary = -0.5 * c_beta( xg, yg, i + 1, j + 1 ) * xg( i + 1, j + 1 );
-        elseif j == gSz_j + 1 % bottom right corner
-            valBoundary = 0.5 * c_beta( xg, yg, i + 1, j - 1 ) * xg( i + 1, j + 1 );
-        else % a point in the bottom border, but not corner
-            valBoundary = c_alpha( xg, yg, i + 1, j ) * xg( i + 1, j + 1 );
-        end
-        
-    elseif i == gSz_i + 1
-        
-        if j == 0 % top left corner
-            valBoundary = 0.5 * c_beta( xg, yg, i - 1, j + 1 ) * xg( i + 1, j + 1 );
-        elseif j == gSz_j + 1 % topright corner
-            valBoundary = -0.5 * c_beta( xg, yg, i - 1, j - 1 ) * xg( i + 1, j + 1 );
-        else % a point in the top border, but not corner
-            valBoundary = c_alpha( xg, yg, i - 1, j ) * xg( i + 1, j + 1 );
-        end
-        
-    elseif j == 0
-        valBoundary = c_gamma( xg, yg, i, j + 1 ) * xg( i + 1, j + 1 );
-    elseif j == gSz_j + 1
-        valBoundary = c_gamma( xg, yg, i, j - 1 ) * xg( i + 1, j + 1 );
-    else
-        disp( 'shouldnt get here' );
+    else 
+        disp( 'shouldnt get here ' );
     end
 
 end
 
-function valBoundary = getBoundaryConditionY( xg, yg, i, j, gSz_i, gSz_j )
-
-    if i == 0 % in bottom border
-        
-        if j == 0 % bottom left corner
-            valBoundary = -0.5 * c_beta( xg, yg, i + 1, j + 1 ) * yg( i + 1, j + 1 );
-        elseif j == gSz_j + 1 % bottom right corner
-            valBoundary = 0.5 * c_beta( xg, yg, i + 1, j - 1 ) * yg( i + 1, j + 1 );
-        else % a point in the bottom border, but not corner
-            valBoundary = c_alpha( xg, yg, i + 1, j ) * yg( i + 1, j + 1 );
-        end
-        
-    elseif i == gSz_i + 1
-        
-        if j == 0 % top left corner
-            valBoundary = 0.5 * c_beta( xg, yg, i - 1, j + 1 ) * yg( i + 1, j + 1 );
-        elseif j == gSz_j + 1 % topright corner
-            valBoundary = -0.5 * c_beta( xg, yg, i - 1, j - 1 ) * yg( i + 1, j + 1 );
-        else % a point in the top border, but not corner
-            valBoundary = c_alpha( xg, yg, i - 1, j ) * yg( i + 1, j + 1 );
-        end
-        
-    elseif j == 0
-        valBoundary = c_gamma( xg, yg, i, j + 1 ) * yg( i + 1, j + 1 );
-    elseif j == gSz_j + 1
-        valBoundary = c_gamma( xg, yg, i, j - 1 ) * yg( i + 1, j + 1 );
-    else
-        disp( 'shouldnt get here' );
-    end
-
-end
+%%%%%%%%%%%%%%%%%%%
+%    
+%    
+%
+%%%%%%%%%%%%%%%%%%%
 
 function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
 
@@ -154,11 +191,11 @@ function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, right_up_col )    = -0.5 * c_beta( xg, yg, i, j );
             A( s_row, up_col )          = c_alpha( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i + 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j + 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i, j, i + 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j );
             
         elseif j == gSz_j % bottom right corner
             
@@ -173,11 +210,11 @@ function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, left_col )        = c_gamma( xg, yg, i, j );
             A( s_row, up_col )          = c_alpha( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i    , j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j - 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i    , j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j );
             
         else % a point in the bottom border, but not corner
 
@@ -196,9 +233,9 @@ function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, right_up_col )    = -0.5 * c_beta( xg, yg, i, j );
             A( s_row, up_col )          = c_alpha( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i - 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j + 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j );
             
         end
         
@@ -217,11 +254,11 @@ function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, right_down_col )  = 0.5 * c_beta( xg, yg, i, j );
             A( s_row, right_col )       = c_gamma( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i + 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i + 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i    , j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j - 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i + 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i + 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i    , j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j );
             
         elseif j == gSz_j % topright corner
 
@@ -236,11 +273,11 @@ function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, left_down_col )   = -0.5 * c_beta( xg, yg, i, j );
             A( s_row, down_col )        = c_alpha( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i + 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i    , j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i - 1, j + 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i + 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i    , j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j );
             
         else % a point in the top border, but not corner
 
@@ -259,9 +296,9 @@ function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, right_down_col )  = 0.5 * c_beta( xg, yg, i, j );
             A( s_row, right_col )       = c_gamma( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i + 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i + 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionX( xg, yg, i + 1, j + 1, gSz_i, gSz_j );            
+            b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i, j, i + 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i + 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionX( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j );            
             
         end
         
@@ -284,9 +321,9 @@ function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
         A( s_row, right_up_col )    = -0.5 * c_beta( xg, yg, i, j );
         A( s_row, up_col )          = c_alpha( xg, yg, i, j );
         
-        b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i + 1, j - 1, gSz_i, gSz_j ) - ...
-                         getBoundaryConditionX( xg, yg, i    , j - 1, gSz_i, gSz_j ) - ...
-                         getBoundaryConditionX( xg, yg, i - 1, j - 1, gSz_i, gSz_j );            
+        b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i, j, i + 1, j - 1, gSz_i, gSz_j ) - ...
+                         getBoundaryConditionX( xg, yg, i, j, i    , j - 1, gSz_i, gSz_j ) - ...
+                         getBoundaryConditionX( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j );            
         
     elseif j == gSz_j
         
@@ -307,9 +344,9 @@ function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
         A( s_row, down_col )        = c_alpha( xg, yg, i, j );
         A( s_row, up_col )          = c_alpha( xg, yg, i, j );
         
-        b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                         getBoundaryConditionX( xg, yg, i    , j + 1, gSz_i, gSz_j ) - ...
-                         getBoundaryConditionX( xg, yg, i - 1, j + 1, gSz_i, gSz_j );            
+        b( s_row, 1 ) = -getBoundaryConditionX( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                         getBoundaryConditionX( xg, yg, i, j, i    , j + 1, gSz_i, gSz_j ) - ...
+                         getBoundaryConditionX( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j );            
     else
         
         % interior point
@@ -359,11 +396,11 @@ function [A, b] = applyStencilY( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, right_up_col )    = -0.5 * c_beta( xg, yg, i, j );
             A( s_row, up_col )          = c_alpha( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i + 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j + 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i, j, i + 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j );
             
         elseif j == gSz_j % bottom right corner
             
@@ -378,11 +415,11 @@ function [A, b] = applyStencilY( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, left_col )        = c_gamma( xg, yg, i, j );
             A( s_row, up_col )          = c_alpha( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i    , j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j - 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i    , j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j );
             
         else % a point in the bottom border, but not corner
 
@@ -401,9 +438,9 @@ function [A, b] = applyStencilY( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, right_up_col )    = -0.5 * c_beta( xg, yg, i, j );
             A( s_row, up_col )          = c_alpha( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i - 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j + 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j );
             
         end
         
@@ -422,11 +459,11 @@ function [A, b] = applyStencilY( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, right_down_col )  = 0.5 * c_beta( xg, yg, i, j );
             A( s_row, right_col )       = c_gamma( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i + 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i + 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i    , j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j - 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i + 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i + 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i    , j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j );
             
         elseif j == gSz_j % topright corner
 
@@ -441,11 +478,11 @@ function [A, b] = applyStencilY( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, left_down_col )   = -0.5 * c_beta( xg, yg, i, j );
             A( s_row, down_col )        = c_alpha( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i + 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i    , j + 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i - 1, j + 1, gSz_i, gSz_j );
+            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i + 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i    , j + 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j );
             
         else % a point in the top border, but not corner
 
@@ -464,9 +501,9 @@ function [A, b] = applyStencilY( A, b, xg, yg, i, j, gSz_i, gSz_j )
             A( s_row, right_down_col )  = 0.5 * c_beta( xg, yg, i, j );
             A( s_row, right_col )       = c_gamma( xg, yg, i, j );
             
-            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i + 1, j - 1, gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i + 1, j    , gSz_i, gSz_j ) - ...
-                             getBoundaryConditionY( xg, yg, i + 1, j + 1, gSz_i, gSz_j );            
+            b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i, j, i + 1, j - 1, gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i + 1, j    , gSz_i, gSz_j ) - ...
+                             getBoundaryConditionY( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j );            
             
         end
         
@@ -489,9 +526,9 @@ function [A, b] = applyStencilY( A, b, xg, yg, i, j, gSz_i, gSz_j )
         A( s_row, right_up_col )    = -0.5 * c_beta( xg, yg, i, j );
         A( s_row, up_col )          = c_alpha( xg, yg, i, j );
         
-        b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i + 1, j - 1, gSz_i, gSz_j ) - ...
-                         getBoundaryConditionY( xg, yg, i    , j - 1, gSz_i, gSz_j ) - ...
-                         getBoundaryConditionY( xg, yg, i - 1, j - 1, gSz_i, gSz_j );            
+        b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i, j, i + 1, j - 1, gSz_i, gSz_j ) - ...
+                         getBoundaryConditionY( xg, yg, i, j, i    , j - 1, gSz_i, gSz_j ) - ...
+                         getBoundaryConditionY( xg, yg, i, j, i - 1, j - 1, gSz_i, gSz_j );            
         
     elseif j == gSz_j
         
@@ -512,9 +549,9 @@ function [A, b] = applyStencilY( A, b, xg, yg, i, j, gSz_i, gSz_j )
         A( s_row, down_col )        = c_alpha( xg, yg, i, j );
         A( s_row, up_col )          = c_alpha( xg, yg, i, j );
         
-        b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i + 1, j + 1, gSz_i, gSz_j ) - ...
-                         getBoundaryConditionY( xg, yg, i    , j + 1, gSz_i, gSz_j ) - ...
-                         getBoundaryConditionY( xg, yg, i - 1, j + 1, gSz_i, gSz_j );            
+        b( s_row, 1 ) = -getBoundaryConditionY( xg, yg, i, j, i + 1, j + 1, gSz_i, gSz_j ) - ...
+                         getBoundaryConditionY( xg, yg, i, j, i    , j + 1, gSz_i, gSz_j ) - ...
+                         getBoundaryConditionY( xg, yg, i, j, i - 1, j + 1, gSz_i, gSz_j );            
     else
         
         % interior point
