@@ -73,6 +73,10 @@ for q = 1 : 4
         dx = x_p1 - x_p0; dy = y_p1 - y_p0;
         len = sqrt( dx^2 + dy^2 );
         
+        if len == 0
+            disp( 'wtf' )
+        end
+        
         ux = dx / len; uy = dy / len;
         l_geo_x = [x_p0, ux, len];
         l_geo_y = [y_p0, uy, len];
@@ -83,8 +87,8 @@ for q = 1 : 4
 end
 
 % define grid dimensions ( xi=e, eta=n )
-Ne = 11;
-Nn = 11;
+Ne = 31;
+Nn = 31;
 
 de = 1 / Ne;
 dn = 1 / Nn;
@@ -151,6 +155,10 @@ for i = 1 : ( Ne + 1 )
                    xl = x_p0 + ( n - ( indxs_n( s ) - 1 ) * b_d ) * n_segments * udx * lenx;
                    yl = y_p0 + ( n - ( indxs_n( s ) - 1 ) * b_d ) * n_segments * udy * leny;
                    
+                   if isnan( xl ) 
+                       disp( 'foo?' )
+                   end
+                   
                case 2
                    seg_params_x = boundaries( s ).x_geo( indxs_e( s ), : );
                    seg_params_y = boundaries( s ).y_geo( indxs_e( s ), : );
@@ -194,6 +202,10 @@ for i = 1 : ( Ne + 1 )
        y = ( 1 - e ) * yl + ( e ) * yr + ( 1 - n ) * yb + ( n ) * yt - ...
            ( 1 - n ) * ( 1 - e ) * yb_0 - ( 1 - e ) * n * yt_0 - ...
            ( 1 - n ) * e * yb_1 - n * e * yt_1;
+       
+       if isnan( x ) 
+           disp( '?' )
+       end
        
        xx_g( i, j ) = x; yy_g( i, j ) = y;
        
