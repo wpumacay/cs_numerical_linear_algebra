@@ -164,12 +164,6 @@ function valBoundary = getBoundaryConditionY( xg, yg, i, j, in, jn, gSz_i, gSz_j
 
 end
 
-%%%%%%%%%%%%%%%%%%%
-%    
-%    
-%
-%%%%%%%%%%%%%%%%%%%
-
 function [A, b] = applyStencilX( A, b, xg, yg, i, j, gSz_i, gSz_j )
 
     % check if is corner or border or interior

@@ -22,9 +22,9 @@ switch option
         
         N1 = 10;
         boundaries(1).xx = [ boundaries(1).xx, -1 * ones( 1, N1 ) ];
-        boundaries(1).xx = [ boundaries(1).xx, linspace( -1, 0, N1 )];
+        boundaries(1).xx = [ boundaries(1).xx, linspace( -1 + ( 1 / N1 ), 0, N1 - 1 )];
         boundaries(1).yy = [ boundaries(1).yy, linspace( 0, -1, N1 ) ];
-        boundaries(1).yy = [ boundaries(1).yy, -1 * ones( 1, N1 ) ];
+        boundaries(1).yy = [ boundaries(1).yy, -1 * ones( 1, N1 - 1 ) ];
         
         N2 = 20;
         boundaries(2).xx = [ boundaries(2).xx, zeros( 1, N2 ) ];
@@ -72,15 +72,21 @@ switch option
 
         theta = linspace( 1.5 * pi, 2 * pi, N );
         boundaries(2).xx = [ boundaries(2).xx, r * cos( theta ) ];
+        %boundaries(2).xx = boundaries(2).xx( 2: end );
         boundaries(2).yy = [ boundaries(2).yy, r * sin( theta ) ];
+        %boundaries(2).yy = boundaries(2).yy( 2: end );
         
         theta = linspace( 0, 0.5 * pi, N );
         boundaries(3).xx = [ boundaries(3).xx, r * cos( theta ) ];
+        %boundaries(3).xx = boundaries(3).xx( 2: end );
         boundaries(3).yy = [ boundaries(3).yy, r * sin( theta ) ];
+        %boundaries(3).yy = boundaries(3).yy( 2: end );
         
         theta = linspace( 0.5 * pi, pi, N );
         boundaries(4).xx = [ boundaries(4).xx, r * cos( theta ) ];
+        %boundaries(4).xx = boundaries(4).xx( 2: end - 1 );
         boundaries(4).yy = [ boundaries(4).yy, r * sin( theta ) ];
+        %boundaries(4).yy = boundaries(4).yy( 2: end - 1 );
         
     case 4
         
