@@ -15,8 +15,12 @@ function [xg, yg] = elliptic_generator( xg, yg )
                                           grid_sz_i, grid_sz_j );
 
     % Replace this basic solver by an iterative method
-   	new_xg = basicSysSolver( Ax, bx );
-   	new_yg = basicSysSolver( Ay, by );
+   	[new_xg, t1] = basicSysSolver( Ax, bx );
+   	[new_yg, t2] = basicSysSolver( Ay, by );
+
+    t = ( t1 + t2 ) / 2;
+
+    fprintf( 'elapsed time: %f \n', t );
 
     xg( 2 : end - 1, 2 : end - 1 ) = reshape( new_xg, grid_sz_i, grid_sz_j );
     yg( 2 : end - 1, 2 : end - 1 ) = reshape( new_yg, grid_sz_i, grid_sz_j );

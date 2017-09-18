@@ -4,8 +4,8 @@ close all
 clc
 
 % define grid size in computational space
-Ne = 4;
-Nn = 4;
+Ne = 30;
+Nn = 30;
 
 % create figures
 fig1 = figure( 1 );
@@ -19,6 +19,9 @@ boundaries = util_load_geometry( 'geometry_2_1.txt' );
 
 % Plot the result of the algebraic generator
 util_plot_grid( fig1, boundaries, xg, yg );
+
+% for testing only
+% [Ax, Ay, bx, by] = generateSysMatrix( xg, yg, size( xg, 1 ), size( xg, 2 ), size( xg, 1 ) - 2, size( xg, 2 ) - 2 );
 
 % Define the number of iterations for the elliptic generator
 nIters = 10;
@@ -43,6 +46,3 @@ for q = 1 : nIters
 	pause;
 
 end
-
-% for testing only
-% [Ax, Ay, bx, by] = generateSysMatrix( xg, yg, size( xg, 1 ), size( xg, 2 ), size( xg, 1 ) - 2, size( xg, 2 ) - 2 );
