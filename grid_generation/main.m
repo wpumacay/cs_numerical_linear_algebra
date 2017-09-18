@@ -4,8 +4,8 @@ close all
 clc
 
 % define grid size in computational space
-Ne = 20;
-Nn = 20;
+Ne = 4;
+Nn = 4;
 
 % create figures
 fig1 = figure( 1 );
@@ -43,3 +43,6 @@ for q = 1 : nIters
 	pause;
 
 end
+
+% for testing only
+% [Ax, Ay, bx, by] = generateSysMatrix( xg, yg, size( xg, 1 ), size( xg, 2 ), size( xg, 1 ) - 2, size( xg, 2 ) - 2 );
