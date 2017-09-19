@@ -6,7 +6,14 @@
 \usepackage{mdframed}
 %margin package
 \usepackage[margin=1in,includefoot]{geometry}
-
+%graphics packages
+\usepackage{graphicx}
+\usepackage{float}
+%pseudocode packages
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{listings}
 
 \begin{document}
 
@@ -80,14 +87,80 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 %% Our implementation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item[c)] \textbf{ Sobre los m\'etodos usados }
 \\
-	
+	En nuestra implementaci\'on decidimos seguir el procedimiento propuesto en varios libros y papers. Seguimos el 
+	siguiente procedimiento: 
+
+	\begin{itemize}
+		\item[*] \textbf{ Uso de un generador algebraico }
+		\\
+		Usamos un generador basado en la Interpolaci\'on Transfinita. La malla generada se usar\'a como condici\'on 
+		inicial para nuestro generador basado en PDEs.
+		%%%%
+		\item[*] \textbf{ Discretizaci\'on de las ecuaciones del generador el\'iptico }
+		\\
+		El generador basado en PDEs usado es el El\'iptico, cuyas ecuaciones son discretizadas y formadas en un 
+		m\'etodo iterativo para calcular un grid por medio de la Iteraci\'on de Picard.
+		%%%%
+		\item[*] \textbf{ Refinamiento de la malla }
+		\\ En este \'ultimo paso usamos el generador El\'iptico discretizado para as\'i poder refinar la malla
+		inicial generada por el generador algebraico.
+	\end{itemize}
+
+	Acontinuaci\'on pasamos a describir los m\'etodos usados.
+
 	\begin{itemize}
 
-		\item M\'etodo algebraico de interpolaci\'on transfinita
+		\item[a)] \textbf{ M\'etodo algebraico de interpolaci\'on transfinita }
 		\\
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	
-
-		\item M\'etodo basado en PDEs el\'ipticas
+		En nuestra implementaci\'on usamos el generador algebraico basado en Interpolaci\'on Transfinita. Este puede ser formulado como sigue :
+		%
+		\begin{gather*}
+		x( \xi, \eta ) = ( 1 - \xi ) x_{l} + \xi x_{r} + ( 1 - \eta ) x_{b} + \eta x_{t} - \hdots \\
+						 ( 1 - \eta ) ( 1 - \xi ) x_{b}(0) - ( 1 - \xi ) \eta x_{t}(0) - \hdots \\
+						 ( 1 - \eta ) \xi x_{b}(1) - \eta \xi x_{t}(1)
+		\\
+		y( \xi, \eta ) = ( 1 - \xi ) y_{l} + \xi y_{r} + ( 1 - \eta ) y_{b} + \eta y_{t} - \hdots \\
+						 ( 1 - \eta ) ( 1 - \xi ) y_{b}(0) - ( 1 - \xi ) \eta y_{t}(0) - \hdots \\
+						 ( 1 - \eta ) \xi y_{b}(1) - \eta \xi y_{t}(1)
+		\end{gather*}
+		Donde, $x_l(\eta)$, $y_l(\eta)$, $x_r(\eta)$, $y_r(\eta)$, $x_b(\xi)$, $y_b(\xi)$, $x_t(\xi)$, $y_t(\xi)$ son las
+		fronteras de la geometr\'ia expresadas como funci\'on de $ \xi $ y $ \eta $, las coordenadas en el espacio de 
+		c\'omputo.
+		\\
+		En nuestro caso, cargamos la geometr\'ia de ejemplo mostrada en la siguiente figura :
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.5]{./imgs/img_geometry.jpg}
+			\includegraphics[scale=0.5]{./imgs/img_geometry_boundaries.jpg}
+			\caption{Geometr\'ia de prueba}
+			\label{fig:img_geometry_boundary}
+		\end{figure}
+		Esta geometr\'ia est\'a dada en forma de puntos, por lo que no tenemos expresiones anal\'iticas para las fronteras.
+		Para esto, expresamos las fronteras como funciones lineales en trozos, haciendo que cada frontera sea definida por un conjunto de subfunciones tipo segmento de recta definidas por los puntos que definen la frontera. Esto se expresa como lo siguinte:
+		\begin{gather*}
+			x(q) = 
+			\begin{cases}
+				x_{i}(q) = x(i) + q \lbrace x(i + 1) - x(i) \rbrace
+			\end{cases}
+			\\
+			y(q) = 
+			\begin{cases}
+				y_{i}(q) = y(i) + q \lbrace y(i + 1) - y(i) \rbrace
+			\end{cases}
+			\\
+			q = {\xi, \eta}
+		\end{gather*}
+		%
+		Al aplicar este m\'etodo a la geometr\'ia dada, obtenemos los siguientes resultados.
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=0.5]{./imgs/img_alg_generator_size_10.jpg}
+			\includegraphics[scale=0.5]{./imgs/img_alg_generator_size_30.jpg}
+			\caption{Grid generado para la geometr\'ia de prueba usando el m\'etodo algebraico, size de 10 y 30}
+			\label{fig:img_grid_algebraic}
+		\end{figure}
+		%
+		\item[b)] \textbf{ M\'etodo basado en PDEs el\'ipticas }
 		\\
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		\\
