@@ -6,10 +6,33 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{float}
+
+\usepackage{listings}
+\usepackage{color}
+\definecolor{miverde}{rgb}{0,0.6,0}
+\definecolor{migris}{rgb}{0.9,0.1,0.1}
+\definecolor{blue}{rgb}{0,0,0.7}
+
+\lstset{
+language=Matlab,
+breaklines=true, 
+frame=single,
+rulesepcolor=\color{migris}, 
+commentstyle=\color{miverde},
+identifierstyle=\color{blue},
+basicstyle=\small\ttfamily}
+
+
+
+
 \title{Precondicionamiento y su utilidad en la generación de mallas con procesos iterativos}
 \author{\Large{Universidad Católica San Pablo}
 	\\ \large{Maestría en Ciencias de la Computación }
 }
+
+
+
+
 
 \begin{document}
 
@@ -97,7 +120,8 @@ Dentro de los precondicionadores podemos distinguir dos grupos: los explícitos 
 \section{Métodos Iterativos}
 
 
-La importancia de los métodos iterativos en álgebra lineal se deriva de un simple hecho: los métodos directos requieren de $O(n^{3})$, mientras que los métodos iterativos pueden llegar a requerir solamente $O(n)$. Aunque los métodos iterativos requieren menos almacenamiento no tienen la fiabilidad de los métodos directos en cuanto a precisiones de solución se requiere. Es así que para matrices con $n > 10^{3}$ se va volviendo intratable el no pensar resolverlo con un algoritmo iterativo.
+La importancia de los métodos iterativos en álgebra lineal se deriva de un simple hecho: los métodos directos requieren de $O(n^{3})$, mientras que los métodos iterativos pueden llegar a requerir solamente $O(n)$. Es así que para matrices con $n > 10^{3}$ se va volviendo intratable el no pensar resolverlo con un algoritmo iterativo. 
+Aunque los métodos iterativos requieren menos almacenamiento no tienen la fiabilidad de los métodos directos en cuanto a precisiones de solución se requiere. 
 
 En algunas aplicaciones, los métodos iterativos fallan y es donde el precondicionamiento es necesario, lamentablemente no siempre es suficiente, para lograr la convergencia en un tiempo razonable.
 Mientras que los métodos directos están practicamente basados en alguna actualización de la eliminación gaussiana, mientras que los métodos iterativos comprende una gran variedad de técnicas, que van desde métodos verdaderamente iterativos, como el Jacobi clásico, Gauss-Seidel e iteraciones $SOR$ al subespacio de Krylov , que teóricamente convergen en un número finito de pasos.
@@ -160,9 +184,16 @@ Una malla estructurada consiste generalmente de cuadriláteros, los cuales son f
 En una malla no estructurada los puntos no pueden ser representados de la misma manera que en las mallas estructuradas, entonces se requiere proveer información adicional para describir la malla. Para representar cualquier punto particular, la conexión con otros puntos puede definirse en la matriz de conectividad.
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.5]{./imgs/mallaEstructurada.jpg}
-	\includegraphics[scale=0.519]{./imgs/mallaNoEstructurada.jpg}
+	\begin{minipage}{.49\linewidth}
+		\centering
+		\includegraphics[scale=0.5]{./imgs/mallaEstructurada.jpg}
+		\center{a)}
+	\end{minipage}
+	\begin{minipage}{.49\linewidth}
+		\centering
+		\includegraphics[scale=0.519]{./imgs/mallaNoEstructurada.jpg}
+		\center{b)}
+	\end{minipage}
 	\caption{a) Malla estructurada b) Malla no estructurada.}
 \end{figure}
 
@@ -183,9 +214,16 @@ Generalmente, para fen\'omenos f\'isicos que tienen lugar en geometr\'ias sencil
 Para ilustrar los conceptos b\'asicos del mapeo se considera un dominio físico bidimensional en coordenadas cartesianas $x,y$ y un dominio computacional en coordenadas cartesianas $\xi,\eta$. La transformaci\'on entre las coordenadas $x,y$ y $\xi,\eta$ debería ser tal que las fronteras del dominio f\'isico deben coincidir con las coordenadas curvil\'ineas.
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.31]{./imgs/planoFisico.jpg}
-	\includegraphics[scale=0.31]{./imgs/planoComputacional.jpg}
+	\begin{minipage}{.49\linewidth}
+		\centering
+		\includegraphics[scale=0.31]{./imgs/planoFisico.jpg}
+		\center{a)}
+	\end{minipage}
+	\begin{minipage}{.49\linewidth}
+		\centering
+		\includegraphics[scale=0.31]{./imgs/planoComputacional.jpg}
+		\center{b)}
+	\end{minipage}
 	\caption{a) Plano F\'isico b) Plano Computacional.}
 \end{figure}
 %% Breve intro a métodos algebráicos y basados en PDEs %%%%%%%%%%%%%%
@@ -301,10 +339,17 @@ En nuestra implementaci\'on usamos el generador algebraico basado en Interpolaci
 		%
 		Al aplicar este m\'etodo a la geometr\'ia dada, obtenemos los siguientes resultados.
 		\begin{figure}[H]
-			\centering
-			\includegraphics[scale=0.41]{./imgs/img_alg_generator_size_10.jpg}
-			\includegraphics[scale=0.41]{./imgs/img_alg_generator_size_30.jpg}
-			\caption{Grid generado para la geometr\'ia de prueba usando el m\'etodo algebraico, size de 10 y 30}
+			\begin{minipage}{.49\linewidth}
+				\centering
+				\includegraphics[scale=0.41]{./imgs/img_alg_generator_size_10.jpg}
+				\center{a)}
+			\end{minipage}
+			\begin{minipage}{.49\linewidth}
+				\centering
+				\includegraphics[scale=0.41]{./imgs/img_alg_generator_size_30.jpg}
+				\center{b)}
+			\end{minipage}
+			\caption{Grid generado para la geometr\'ia de prueba usando el m\'etodo algebraico, size de a)10 y b)30}
 			\label{fig:img_grid_algebraic}
 		\end{figure}
 \subsubsection{Método Basado en PDEs Elípticas}
@@ -364,14 +409,39 @@ Para poder refinar la malla generada por el generador algebraico usamos un gener
 			\label{fig:img_stencil}
 		\end{figure}
 		Implementamos el generador el\'iptico en MATLAB, lo cu\'al nos dio los siguientes resultados al usar la malla del generador algebraico de la geometr\'ia de ejemplo como condici\'on inicial.
-		\begin{figure}[H]
-			\centering
-			\includegraphics[scale=0.41]{./imgs/img_elliptic_generator_size_10.jpg}
-			\includegraphics[scale=0.41]{./imgs/img_elliptic_generator_size_30.jpg}
-			\caption{Grid generado para la geometr\'ia de prueba usando el generador el\'iptico, size de 10 y 30}
+		
+\begin{figure}[H]
+	\begin{minipage}{.49\linewidth}
+		\centering
+		\includegraphics[scale=0.41]{./imgs/img_elliptic_generator_size_10.jpg}
+		\center{a)}
+	\end{minipage}
+	\begin{minipage}{.49\linewidth}
+		\centering
+		\includegraphics[scale=0.41]{./imgs/img_elliptic_generator_size_30.jpg}
+		\center{b)}
+	\end{minipage}
+	\caption{Grid generado para la geometr\'ia de prueba usando el generador el\'iptico, size de a)10 y b)30}
 			\label{fig:img_grid_algebraic}
-		\end{figure}
+\end{figure}
 	
+\section{Resultados}
+En el desarrollo del presente trabajo verificamos la importancia de usar precondicionamiento al momento de resolver un sistema de ecuación lineal para la generación de una malla, para este propósito se uso el método de gauss seidel por bloque como matriz de precondicionamiento, y como se podrá observar en la siguiente figura ambas mallas son generadas correctamente con ambos métodos, con la diferencia que el método de gauss seidel por bloque converge con mucho menos iteraciones que el método de gauss seidel tradicional.
+
+\begin{figure}[H]
+	\begin{minipage}{.49\linewidth}
+		\centering
+		\includegraphics[scale=0.44]{./imgs/GSBloque.jpg}
+		\center{a)}
+	\end{minipage}
+	\begin{minipage}{.49\linewidth}
+		\centering
+		\includegraphics[scale=0.44]{./imgs/GS.jpg}
+		\center{b)}
+	\end{minipage}
+	\caption{a)Gauss seidel por bloque. Converge con 13 iteraciones b)Gauss seidel. Converge con 715 iteraciones}
+\end{figure}
+
 
 \clearpage
 \begin{thebibliography}{10}
@@ -397,5 +467,12 @@ LLOYD N. TREFETHEN, DAVID BAU:
 1997.
 
 \end{thebibliography}
+
+\clearpage
+\section{Anexos}
+\subsection{Código - Gauss Seidel}
+\lstinputlisting[language=Matlab]{gs.m}
+\subsection{Código - Gauss Seidel por Bloque}
+\lstinputlisting[language=Matlab]{Bgs.m}
 
 \end{document}
