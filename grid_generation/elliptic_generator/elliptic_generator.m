@@ -28,8 +28,8 @@ function [xg, yg] = elliptic_generator( xg, yg )
     maxIt = 2000; 
     tol = 1e-6;
 
-   	[new_xg, ~] = block_gauss_seidel_solver( Ax, bx, xg_0, xstar, maxIt, tol );
-   	[new_yg, ~] = block_gauss_seidel_solver( Ay, by, yg_0, ystar, maxIt, tol );
+   	[new_xg, ~] = block_gauss_seidel_solver( Ax, bx, xg_0, xstar, maxIt, tol, round( sqrt( N ) + 1 ) );
+   	[new_yg, ~] = block_gauss_seidel_solver( Ay, by, yg_0, ystar, maxIt, tol, round( sqrt( N ) + 1 ) );
 
     %[new_xg, ~] = gauss_seidel_solver( Ax, bx, xg_0, xstar, maxIt, tol );
     %[new_yg, ~] = gauss_seidel_solver( Ay, by, yg_0, ystar, maxIt, tol );

@@ -1,0 +1,256 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+
+			<div class="slides">
+
+				<!-- PRESENTATION *********************** -->
+				<section>
+					<h3>
+						Título del trabajo
+					</h3>
+					<br>
+					<br>
+					<ol>
+						<li>nombre1</li>
+						<li>nombre2</li>
+						<li>nombre3</li>
+						<li>nombre4</li>
+					</ol>					 
+				</section>
+				<!-- ************************************ -->
+
+				<!-- FUNDAMENTO TEÓRICO - PRECOND. + MET. ITERATIVOS - CHRISTIAN *********************** -->
+				<section>				
+					<h1>SOBRE PRECONDICIONAMIENTO Y MÉTODOS ITERATIVOS</h1>
+				</section>
+
+				<section> <!-- Este grupo de slides saldrán como verticales -->
+
+					<section>
+						<h3> TODO </h3>
+					</section>
+
+				</section>				
+
+
+				<!-- *********************************************************************************** -->
+
+
+
+				<!-- FUNDAMENTO TEÓRICO - GENERACIÓN DE MALLAS - JOEL ********************************** -->
+				<section>
+					<h1>SOBRE GENERACIÓN DE MALLAS</h1>
+				</section>				
+
+				<section> <!-- Este grupo de slides saldrán como verticales -->
+
+					<section>
+						<h3> TODO </h3>
+					</section>
+
+				</section>
+
+
+				<!-- *********************************************************************************** -->
+
+				<!-- PROBLEMA / GENERACIÓN DE MALLAS - WILBERT ***************************************** -->
+				<section>
+					<h1>SOBRE EL PROBLEMA, MÉTODOS USADOS Y RESULTADOS 1</h1>
+				</section>				
+
+				<section> <!-- Este grupo de slides saldrán como verticales -->
+
+					<section>
+						<h3> TODO </h3>
+					</section>
+
+				</section>
+
+				<!-- *********************************************************************************** -->
+
+				<!-- BLOCK-GAUSS SEIDEL, PRECOND. Y RESULTADOS - JOSÉ ********************************** -->
+				<section>
+					<h1>SOBRE EL PRECONDICIONADOR Y EL MÉTODO USADO PARA RESOLVER EL SISTEM, RESULTADOS 2</h1>
+				</section>				
+
+				<section> <!-- Este grupo de slides saldrán como verticales -->
+
+					<section>
+						<h3> TODO </h3>
+					</section>
+
+				</section>				
+
+				<!-- *********************************************************************************** -->
+
+				<!-- EJEMPLOS -->
+				<section>
+					<section>
+						<div>
+							<h3>Circle packing</h3>
+							<h7>An example</h7>
+						</div>
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_circle_container_init.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/img_circle_container_result.jpg" align="right">
+						</div>
+					</section>
+					<section>
+						<div>
+							<h3>Circle packing</h3>
+							<h7>Mathematical formulation</h7>
+						</div>
+						<br>
+						<br>
+						<div>
+							\[\begin{gather*}
+							\textit{minimize } R \textit{ s.t }\\
+
+							\sqrt{ x_{i}^{2} + y_{i}^{2} } \leq R - r_{i}, 1 \leq i \leq n \\
+							\sqrt{ ( x_{i} - x_{j} )^{2} + ( y_{i} - y_{j} )^{2} } \geq r_{i} + r_{j}, 1 \leq i < j \leq n \\
+							\end{gather*} \]
+						</div>
+
+					</section>
+
+				</section>
+
+				<section>
+					<ol>
+						<li>Optimization</li>
+						<li>Diversification</li>
+						<li>Intensification</li>
+					</ol>
+				</section>
+
+				<section>
+
+					<section>
+						<div>
+							\[\begin{gather*}
+							\textit{X: current circle configuration} \\
+							\textit{minimize } U(X)  \textit{ where :}\\
+
+							U(X) = \sum_{i=0}^{n-1} \sum_{j=i+1}^{n} 0.5 O_{ij}^{2} \\
+							O_{0j} = max \lbrace \sqrt{x_{j}^{2} + y_{j}^{2}} + r_{j} - R, 0 \rbrace \\
+							O_{ij} = max \lbrace r_{i} + r_{j} - \sqrt{ ( x_{i} - x_{j} )^{2} + ( y_{i} - y_{j} )^{2} } \rbrace \\
+
+							\end{gather*} \]
+						</div>
+					</section>
+
+					<section>
+						<div>
+							<img width="760" height="500" data-src="resources/gifs/optimization.gif" align="center">
+						</div>
+					</section>
+
+					<section>
+
+						<pre>
+							<code class="hljs" data-trim contenteditable="false">
+
+
+								// BS-GD optimizer
+								GradientDescent( pConfiguration );
+
+					            if ( !pConfiguration->isContainerFeasible() )
+					            {
+					                return;
+					            }
+
+
+					            // Do binary search to look for a better one
+					            int k = pConfiguration->getContainer().r / R_V;
+					            int _upBound = k - 1;
+					            int _loBound = 0;
+					            double _sum = 0.0;
+					            for ( int q = 0; q < pConfiguration->size; q++ )
+					            {
+					                double _frac = pConfiguration->getCircleByIndx( q ).r / R_V;
+					                _sum += _frac * _frac;
+					            }
+					            _loBound = floor( sqrt( _sum ) );
+
+					            do
+					            {
+					                if ( pConfiguration->isContainerFeasible() )
+					                {
+					                    _upBound = k - 1;
+					                }
+					                else
+					                {
+					                    _loBound = k;
+					                }
+
+					                k = ( _loBound + _upBound ) / 2;
+					                pConfiguration->getContainer().r = k * R_V;
+					                
+					                GradientDescent( pConfiguration );
+
+					            }while( _upBound > _loBound );
+							</code>
+							
+						</pre>
+					</section>
+
+				</section>
+
+				<section>
+					<h1>GRACIAS POR SU ATENCIÓN</h1>
+				</section>	
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+
+				math: {
+					mathjax: 'resources/libs/MathJax/MathJax.js',
+					config: 'TeX-AMS_HTML-full'
+				},
+
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'lib/js/classList.js' },
+					{ src: 'plugin/math/math.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+
+			});
+		</script>
+	</body>
+</html>
