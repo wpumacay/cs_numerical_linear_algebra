@@ -24,7 +24,7 @@ util_plot_grid( fig1, boundaries, xg, yg );
 % [Ax, Ay, bx, by] = generateSysMatrix( xg, yg, size( xg, 1 ), size( xg, 2 ), size( xg, 1 ) - 2, size( xg, 2 ) - 2 );
 
 % Define the number of iterations for the elliptic generator
-nIters = 10;
+nIters = 5;
 
 % Use the elliptic generator
 
@@ -43,6 +43,6 @@ for q = 1 : nIters
 
 	fprintf( 'solved iteration %d\n', q );
 
-	pause;
+	pause
 
 end
