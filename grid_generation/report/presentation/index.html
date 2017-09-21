@@ -143,20 +143,17 @@
 						<h3> RELACIÓN DE TRANSFORMACIÓN </h3>
 						<div>
 							\[\begin{gather*}
-							\xi=\xi(x,y,z),\eta=\eta(x,y,z),\zeta=\zeta(x,y,z)\\
+							\xi=\xi(x,y),\eta=\eta(x,y)\\
 
-							\left[\begin{array}{ccc}
-							\frac{\partial u}{\partial x} & \frac{\partial u}{\partial y} & \frac{\partial u}{\partial z}\\
-							\frac{\partial v}{\partial x} & \frac{\partial v}{\partial y} & \frac{\partial v}{\partial z}\\
-							\frac{\partial w}{\partial x} & \frac{\partial w}{\partial y} & \frac{\partial w}{\partial z}
-							\end{array}\right]=\left[\begin{array}{ccc}
-							\frac{\partial u}{\partial\xi} & \frac{\partial u}{\partial\eta} & \frac{\partial u}{\partial\zeta}\\
-							\frac{\partial v}{\partial\xi} & \frac{\partial v}{\partial\eta} & \frac{\partial v}{\partial\zeta}\\
-							\frac{\partial w}{\partial\xi} & \frac{\partial w}{\partial\eta} & \frac{\partial w}{\partial\zeta}
-							\end{array}\right]\left[\begin{array}{ccc}
-							\frac{\partial\xi}{\partial x} & \frac{\partial\xi}{\partial y} & \frac{\partial\xi}{\partial z}\\
-							\frac{\partial\eta}{\partial x} & \frac{\partial\eta}{\partial y} & \frac{\partial\eta}{\partial z}\\
-							\frac{\partial\zeta}{\partial x} & \frac{\partial\zeta}{\partial y} & \frac{\partial\zeta}{\partial z}
+							\left[\begin{array}{cc}
+							\frac{\partial u}{\partial x} & \frac{\partial u}{\partial y}\\
+							\frac{\partial v}{\partial x} & \frac{\partial v}{\partial y}
+							\end{array}\right]=\left[\begin{array}{cc}
+							\frac{\partial u}{\partial\xi} & \frac{\partial u}{\partial\eta}\\
+							\frac{\partial v}{\partial\xi} & \frac{\partial v}{\partial\eta}
+							\end{array}\right]\left[\begin{array}{cc}
+							\frac{\partial\xi}{\partial x} & \frac{\partial\xi}{\partial y}\\
+							\frac{\partial\eta}{\partial x} & \frac{\partial\eta}{\partial y}
 							\end{array}\right]\\
 							\\
 							\end{gather*} \]
