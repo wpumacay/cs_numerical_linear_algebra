@@ -129,21 +129,6 @@ Mientras que los métodos directos están practicamente basados en alguna actual
 Por ejemplo, cuando A es definida positiva y simétrica (hermitiana en el caso complejo) el método del Gradiente Conjugado resuelve el sistema $(1)$ muy rápido bajo ciertas condiciones con respecto a sus autovalores.
 
 
-\subsection{Precondicionadores}
-
-La velocidad de convergencia de los métodos iterativos depende de las propiedades espectrales de la matriz del sistema. Así si M es una matriz invertible que se aproxima de cierta manera a la matriz del sistema, A, los
-sistemas
-\[Ax = B\]
-\[M^{-1}Ax = M^{-1}B\]
-tienen las mismas soluciones. No obstante, es posible que las propiedades espectrales de $M^{-1}A$ sean más favorables que las de A. Al sistema
-\[M^{-1}Ax = M^{-1}B\]
-se le llama sistema precondicionado por la izquierda. Hay otras posibles estrategias para el precondicionado de un sistema como usar un precondicionador por la derecha o combinar iteraciones de distintos métodos iterativos.
-
-Una posible elección de M, que se denomina precondicionador del sistema, es el precondiconador de Jacobi donde M = diag(A).
-
-Otro tipo de precondicionadores, en general, más eficientes son los basados
-en descomposiciones LU incompletas de la matriz A.
-
 
 \section{Generación de Mallas}
 En esta sección explicaremos conceptos previos para la generación de mallas, los cuales nos ayudaran a entenderentender la problemática generada, y cómo es que podemos aplicar un m\'etodo de precondicionamiento para agilizar la generaci\'on de mallas.
