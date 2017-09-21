@@ -81,10 +81,321 @@
 					<h1>SOBRE EL PROBLEMA, MÉTODOS USADOS Y RESULTADOS 1</h1>
 				</section>				
 
-				<section> <!-- Este grupo de slides saldrán como verticales -->
+				<section>
+
+					<div>
+						<h3> Métodos usados </h3>
+						<p>
+							El procedimiento que seguimos consiste de los siguientes 3 pasos:
+						</p>
+					</div>
+
+					<br>
+					<ol>
+						<li> Uso del generador algebraico de interpolación transfinita </li>
+						<li> Discretización de las ecuaciones del generador elíptico </li>
+						<li> Refinamiento iterativo de la malla</li>
+					</ol>		
+
+				</section>
+
+				<!-- ALG GENERATOR ********************************************************************-->
+				<section> 
+
+					<section> 
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+							<p>
+								Como paso inicial usamos este método de generación algebraico, el cuál
+								calcula los puntos dentro del grid/mesh como una interpolación entre las 
+								fronteras de la geometría.
+							</p>
+						</div>
+					</section>
+
+					<section> 
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+						</div>
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_alg_tfi.jpg" align="center">
+						</div>
+							
+					</section>
+
+					<section> 
+
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+
+							\[\begin{gather*}
+								x( \xi, \eta ) = ( 1 - \xi ) x_{l} + \xi x_{r} + ( 1 - \eta ) x_{b} + \eta x_{t} - ... \\
+												 ( 1 - \eta ) ( 1 - \xi ) x_{b}(0) - ( 1 - \xi ) \eta x_{t}(0) - ... \\
+												 ( 1 - \eta ) \xi x_{b}(1) - \eta \xi x_{t}(1)
+								\\
+								y( \xi, \eta ) = ( 1 - \xi ) y_{l} + \xi y_{r} + ( 1 - \eta ) y_{b} + \eta y_{t} - ... \\
+												 ( 1 - \eta ) ( 1 - \xi ) y_{b}(0) - ( 1 - \xi ) \eta y_{t}(0) - ... \\
+												 ( 1 - \eta ) \xi y_{b}(1) - \eta \xi y_{t}(1)
+							\end{gather*} \]
+
+						</div>
+
+					</section>
+
+					<section> 
+
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+						</div>
+
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_geometry.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/img_geometry_boundaries.jpg" align="right">
+							<p> Fronteras de la geometría </p>
+						</div>
+
+					</section>
+
+					<section> 
+
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+							<p>
+								Frontera en forma analítica como segmentos de recta
+							</p>
+						</div>
+
+						<div>
+							\[\begin{gather*}
+								x(q) = 
+								\begin{cases}
+									x_{i}(q) = x(i) + q \lbrace x(i + 1) - x(i) \rbrace
+								\end{cases}
+								\\
+								y(q) = 
+								\begin{cases}
+									y_{i}(q) = y(i) + q \lbrace y(i + 1) - y(i) \rbrace
+								\end{cases}
+								\\
+								q = {\xi, \eta}
+							\end{gather*} \]
+						</div>
+
+					</section>
+
+					<section> 
+
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+							<p>
+								Malla obtenidas con el generador algebraico
+							</p>
+						</div>
+
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_alg_generator_size_10.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/img_alg_generator_size_30.jpg" align="right">
+						</div>
+
+					</section>
+
+				</section>
+
+				<!-- PDE GENERATOR ********************************************************************-->
+
+				<section>
+					
+					<section>
+						<div>
+							<h3>
+								Generador Elíptico
+							</h3>
+							<p>
+								Para refinar la malla generada por el método algebráico usamos este tipo de generador, el cuál se basa en definir un problema de frontera basado en una PDE
+								elíptica en el espacio x, y.
+							</p>
+						</div>
+
+					</section>
 
 					<section>
-						<h3> TODO </h3>
+						
+						<div>
+							<h3>
+								Generador Elíptico
+							</h3>
+							<h4>
+								Problema de frontera
+							</h4>
+						</div>
+
+						<div>
+							<p>
+								Respecto al espacio físico
+							</p>
+							\[\begin{gather*}
+							%
+								\xi_{xx} + \xi_{yy} = 0 \\
+								\eta_{xx} + \eta_{yy} = 0 \\
+							%
+							\end{gather*} \]
+						</div>
+
+						<div>
+							<p>
+								Respecto al espacio de cómputo
+							</p>
+							\[\begin{gather*}
+								( x_{\eta \eta}^{2} + y_{\eta \eta}^{2} )x_{\xi \xi} 
+									- 2 ( x_{\xi} x_{\eta} + y_{\xi} y_{\eta} ) x_{\xi \eta}
+									+ ( x_{\xi \xi}^{2} + y_{\xi \xi}^{2} )x_{\eta \eta}
+								\\
+								( x_{\eta \eta}^{2} + y_{\eta \eta}^{2} )y_{\xi \xi} 
+									- 2 ( x_{\xi} x_{\eta} + y_{\xi} y_{\eta} ) y_{\xi \eta}
+									+ ( x_{\xi \xi}^{2} + y_{\xi \xi}^{2} )y_{\eta \eta}
+							\end{gather*} \]
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Generador Elíptico
+							</h3>
+							<h4>
+								Discretización
+							</h4>
+						</div>
+
+						\[\begin{gather*}
+							\alpha_{ij} ( x_{i+1,j} - 2 x_{i,j} + x_{i-1,j} ) + \gamma_{ij} ( x_{i, j + 1} - 2x_{i, j} + x_{i,j-1} ) - ... \\
+								 0.5 \beta_{ij} ( x_{i+1,j+1} - x_{i+1,j-1} - x_{i-1,j+1} + x_{i-1,j-1} ) = 0
+						\end{gather*} \]
+
+						\[\begin{gather*}
+							\alpha_{ij} ( y_{i+1,j} - 2 y_{i,j} + y_{i-1,j} ) + \gamma_{ij} ( y_{i, j + 1} - 2y_{i, j} + y_{i,j-1} ) - ... \\
+								 0.5 \beta_{ij} ( y_{i+1,j+1} - y_{i+1,j-1} - y_{i-1,j+1} + y_{i-1,j-1} ) = 0
+						\end{gather*} \]
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Generador Elíptico
+							</h3>
+							<h4>
+								Discretización
+							</h4>
+						</div>
+
+							\[\begin{gather*}
+							%
+								\xi = \frac{i}{N_{\xi}},\eta = \frac{j}{N_{\eta}}
+							%
+							\end{gather*} \]
+
+							\[\begin{gather*}
+							%
+								 \alpha_{ij} = 0.25 ( ( x_{i,j+1} - x_{i,j-1} )^{2} + (y_{i,j+1} - y_{i,j-1})^{2} )
+							\end{gather*} \]
+
+							\[\begin{gather*}
+								 \beta_{ij} = 0.25 ( ( x_{i,j+1} - x_{i,j-1} ) ( x_{i+1,j} - x_{i-1,j} ) + ... \\ ( y_{i,j+1} - y_{i,j-1} ) ( y_{i+1,j} - y_{i-1,j} ) )
+							\end{gather*} \]
+
+							\[\begin{gather*}
+								 \gamma_{ij} = 0.25 ( ( x_{i+1,j} - x_{i-1,j} )^{2} + (y_{i+1,j} - y_{i-1,j})^{2} )
+							%
+							\end{gather*} \]
+
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						
+						<div>
+							<h3>
+								Refinamiento iterativo
+							</h3>
+							<p>
+								De las ecuaciones discretizadas podemos formar un sistema lineal. Para esto hacemos uso de la iteración de picard para poder obtener las ecuaciones que describan en forma iterativa un sistema lineal.
+							</p>
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Refinamiento iterativo
+							</h3>
+							<p>
+								Iteración de Picard
+							</p>
+						</div>
+
+						\begin{gather*}
+							\alpha_{ij}^{k} ( x_{i+1,j}^{k+1} - 2 x_{i,j}^{k+1} + x_{i-1,j}^{k+1} ) + \gamma_{ij}^{k} ( x_{i, j + 1}^{k+1} - 2 x_{i, j}^{k+1} + x_{i,j-1}^{k+1} ) 
+						\end{gather*}
+
+						\begin{gather*}
+							-0.5 \beta_{ij}^{k} ( x_{i+1,j+1}^{k+1} - x_{i+1,j-1}^{k+1} - x_{i-1,j+1}^{k+1} + x_{i-1,j-1}^{k+1} ) = 0
+						\end{gather*}
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Refinamiento iterativo
+							</h3>
+							<p>
+								Stencil equivalente para generar la matriz del sistema lineal
+							</p>
+						</div>
+
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_stencil.jpg" align="center">
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Refinamiento iterativo
+							</h3>
+							<p>
+								Mallas resultantes luego de 10 iteraciones ( size 10 y 30 respectivamente )
+							</p>
+						</div>
+
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_elliptic_generator_size_10.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/img_elliptic_generator_size_30.jpg" align="right">
+						</div>
+
 					</section>
 
 				</section>
