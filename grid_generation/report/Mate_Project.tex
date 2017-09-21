@@ -407,11 +407,26 @@ Para poder refinar la malla generada por el generador algebraico usamos un gener
 		\center{b)}
 	\end{minipage}
 	\caption{Grid generado para la geometr\'ia de prueba usando el generador el\'iptico, size de a)10 y b)30}
-			\label{fig:img_grid_algebraic}
+			\label{fig:img_grid_elliptic}
 \end{figure}
 	
-\section{Resultados}
-En el desarrollo del presente trabajo verificamos la importancia de usar precondicionamiento al momento de resolver un sistema de ecuación lineal para la generación de una malla, para este propósito se uso el método de gauss seidel por bloque como matriz de precondicionamiento, y como se podrá observar en la siguiente figura ambas mallas son generadas correctamente con ambos métodos, con la diferencia que el método de gauss seidel por bloque converge con mucho menos iteraciones que el método de gauss seidel tradicional.
+\section{Precondicionamiento al sistema y resultados}
+
+Un ejemplo de la matriz generada por el generador el\'iptico, para el caso de un grid de $3x3$ es la siguiente:
+
+\begin{figure}[H]
+	\begin{minipage}{.49\linewidth}
+		\centering
+		\includegraphics[scale=0.44]{./imgs/img_sys_matrix_3_3.jpg}
+	\end{minipage}
+	\caption{Matriz del sistema obtenida por el generador el\'iptico}
+\end{figure}
+
+Si seguimos generando m\'as matrices, veremos que la matriz del sistema es banda. El ancho de la banda depende del tamaño del grid que se use, siendo este igual a $n + 1$, con $n$ igual al tamaño del grid a usar.
+
+Al analizar la matriz tambi\'en pudimos observar que no era ni sim\'etrica ni definida positiva, lo que nos limita en el caso de la elecci\'on del precondicionador ( por ejemplo, no gradiente-conjugado-precondicionado ). Debido a que es banda y sparse, tenemos que un buen método es trabajar el sistema por bloques.
+
+Para este propósito se uso el método de gauss seidel por bloques como matriz de precondicionamiento, y como se podrá observar en la siguiente figura ambas mallas son generadas correctamente con ambos métodos, con la diferencia que el método de gauss seidel por bloque converge con mucho menos iteraciones que el método de gauss seidel tradicional.
 
 \begin{figure}[H]
 	\begin{minipage}{.49\linewidth}
@@ -451,13 +466,21 @@ LLOYD N. TREFETHEN, DAVID BAU:
 \textit{Numerical Linear Algebra - }
 1997.
 
+\bibitem{Farrashkhalvat} 
+M. FARRASHKHALVAT, J.P.MILES:
+\textit{Basic Structured Grid Generation, with an introduction to unstructured grid generation} 
+
+\bibitem{GridGenerationHandbook} 
+JOE F. THOMPSON, BHARAT K. SONI, NIGEL P. WEATHERILL
+\textit{Handbook of Grid Generation} 
+
 \end{thebibliography}
 
 \clearpage
 \section{Anexos}
 \subsection{Código - Gauss Seidel}
-\lstinputlisting[language=Matlab]{gs.m}
+\lstinputlisting[language=Matlab]{../elliptic_generator/utils/gauss_seidel_solver.m}
 \subsection{Código - Gauss Seidel por Bloque}
-\lstinputlisting[language=Matlab]{Bgs.m}
+\lstinputlisting[language=Matlab]{../elliptic_generator/utils/block_gauss_seidel_solver.m}
 
 \end{document}
