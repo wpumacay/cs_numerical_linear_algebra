@@ -62,14 +62,107 @@
 
 				<!-- FUNDAMENTO TEÓRICO - GENERACIÓN DE MALLAS - JOEL ********************************** -->
 				<section>
-					<h1>SOBRE GENERACIÓN DE MALLAS</h1>
+					<h1>GENERACIÓN DE MALLAS</h1>
 				</section>				
 
 				<section> <!-- Este grupo de slides saldrán como verticales -->
 
 					<section>
-						<h3> TODO </h3>
+						<h3> GENERACIÓN DE MALLAS </h3>
+						<ul>
+							<li>La idea es mallar un espacio dado algunos limites dado un dominio dado.</li>
+							<li>Existen técnicas muy generales, capaces de generar mallas en geometrı́as complejas.</li>
+							<li>También existen técnicas para generar mallas a una gran velocidad, pero son incapaces de mallar geometrı́as de cierta complejidad</li>
+							<li>Dependiendo la geometrı́a del dominio, el coste computacional y la capacidad de control sobre la malla será lo que nos haga decidir por los métodos.</li>
+						</ul>
 					</section>
+					<section>
+						<h3> TIPOS DE MALLAS </h3>
+						<ul>
+							<li>Métodos de generación de malla estructurada:
+								<ul>
+									<li>Algebraicos.</li>
+							  		<li>Basados en EDPs.</li>
+							  		<li>Superposición-deformación de retı́cula.</li>
+							  		<li>Crecimiento estructurado.</li>
+								</ul>
+							</li>
+					  		<li>Métodos de generación de malla no estructurada
+					  			<ul>
+									<li>Inserción de nodos y posterior conexión: Delaunay.</li>
+						  			<li>Generación simultánea de nodos y conectividad: Frente de avance.</li>
+						  			<li>Métodos Multibloque.</li>				  			
+								</ul>
+					  		</li>
+						</ul>
+					</section>
+					<section>
+						<h3> TIPOS DE MALLAS </h3>
+						<div>
+							<table>
+							  	<tr>
+							    	<th>Mallas Estructuradas</th>
+							    	<th>Mallas No Estructuradas</th> 
+							  	</tr>
+							</table>
+							<img width="400" height="400" data-src="resources/imgs/mallaEstructurada.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/mallaNoEstructurada.jpg">							
+						</div>
+						<p>Nuestro Proposito: Mallas Estructuradas</p>
+					</section>
+					<section>
+						<h3> MALLAS ESTRUCTURADAS </h3>
+						<ul>
+							<li>
+							<h4>Métodos Algebraicos Basados en Interpolación.</h4>
+								<p>Se relacionan los puntos de malla del dominio fı́sico con el dominio computacional. Se basa en el uso de técnicas de interpolación y relaciones algebraicas exactas, lo cual permite la obtención rápida de la malla. 
+								</p>
+							</li>
+							<li>
+							<h4>Métodos Basados en PDE's</h4>
+								<p>Se resuelve un sistema de PDE’s para localizar los puntos en el interior del dominio fı́sico.
+							</p>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h3> RELACIÓN DE TRANSFORMACIÓN </h3>
+						<div>
+							<table>
+							  	<tr>
+							    	<th>Plano Fı́sico.</th>
+							    	<th> - </th>
+							    	<th>Plano Computacional.</th> 
+							  	</tr>
+							</table>							
+							<img width="400" height="400" data-src="resources/imgs/planoFisico.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/planoComputacional.jpg">							
+						</div>
+					</section>
+					<section>
+						<h3> RELACIÓN DE TRANSFORMACIÓN </h3>
+						<div>
+							\[\begin{gather*}
+							\xi=\xi(x,y,z),\eta=\eta(x,y,z),\zeta=\zeta(x,y,z)\\
+
+							\left[\begin{array}{ccc}
+							\frac{\partial u}{\partial x} & \frac{\partial u}{\partial y} & \frac{\partial u}{\partial z}\\
+							\frac{\partial v}{\partial x} & \frac{\partial v}{\partial y} & \frac{\partial v}{\partial z}\\
+							\frac{\partial w}{\partial x} & \frac{\partial w}{\partial y} & \frac{\partial w}{\partial z}
+							\end{array}\right]=\left[\begin{array}{ccc}
+							\frac{\partial u}{\partial\xi} & \frac{\partial u}{\partial\eta} & \frac{\partial u}{\partial\zeta}\\
+							\frac{\partial v}{\partial\xi} & \frac{\partial v}{\partial\eta} & \frac{\partial v}{\partial\zeta}\\
+							\frac{\partial w}{\partial\xi} & \frac{\partial w}{\partial\eta} & \frac{\partial w}{\partial\zeta}
+							\end{array}\right]\left[\begin{array}{ccc}
+							\frac{\partial\xi}{\partial x} & \frac{\partial\xi}{\partial y} & \frac{\partial\xi}{\partial z}\\
+							\frac{\partial\eta}{\partial x} & \frac{\partial\eta}{\partial y} & \frac{\partial\eta}{\partial z}\\
+							\frac{\partial\zeta}{\partial x} & \frac{\partial\zeta}{\partial y} & \frac{\partial\zeta}{\partial z}
+							\end{array}\right]\\
+							\\
+							\end{gather*} \]
+						</div>
+					</section>
+					
 
 				</section>
 
