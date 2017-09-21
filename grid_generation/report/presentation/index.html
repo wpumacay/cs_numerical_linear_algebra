@@ -28,35 +28,213 @@
 
 				<!-- PRESENTATION *********************** -->
 				<section>
-					<h3>
-						Título del trabajo
-					</h3>
+					<h4>
+						Precondicionamiento y su utilidad en la generación de mallas con procesos iterativos
+					</h4>
 					<br>
-					<br>
+					<h5> Universidad Católica San Pablo </h5>
+					<h6> Maestría en Ciencias de la Computación </h6>
 					<ol>
-						<li>nombre1</li>
-						<li>nombre2</li>
-						<li>nombre3</li>
-						<li>nombre4</li>
+						<li> Christian Córdova Estrada</li>
+						<li> Wilbert</li>
+						<li> Joel </li>
+						<li> Jose </li>
 					</ol>					 
 				</section>
-				<!-- ************************************ -->
-
-				<!-- FUNDAMENTO TEÓRICO - PRECOND. + MET. ITERATIVOS - CHRISTIAN *********************** -->
-				<section>				
-					<h1>SOBRE PRECONDICIONAMIENTO Y MÉTODOS ITERATIVOS</h1>
-				</section>
-
-				<section> <!-- Este grupo de slides saldrán como verticales -->
-
+				<!-- - - - - - - BEGIN Christian - - - - - - - - - - - - -->
+				<section>
+					<section>				
+						<h2> PRECONDICIONAMIENTO </h2>
+					</section>
 					<section>
-						<h3> TODO </h3>
+						<h3 align="left" >Historia </h3>
+						<ul>
+							<li> Se utilizó por primera vez en un artículo de <font color=#66490A><b>Alan Turing</b></font> (1948).</li>
+						  	<li> Primer uso del término en relación con los métodos iterativos se encuentra en un documento de <font color=#66490A><b>D. Evans</b></font> sobre la aceleración que aplicaba el ruso <font color=#66490A><b>Chebyschev</b></font> en el método de <font color=#66490A><b>SSOR</b></font> en 1968.
+						  	</li>
+						</ul>
+					</section>
+					<section>
+						<h3 align="left"> Historia </h3>
+						<ul>
+							<li> <font color=#66490A><b>Lamberto Cesari</b></font> en 1937 tenía un concepto de precondicionamiento como un medio para poder reducir el número condicionante y así mejorar la convergencia de un proceso iterativo, su idea fue usar un polinomio <i>p(A)</i>:</li>
+								<div>
+									\[
+										\begin{gather*}
+											Ax = b , \hspace{0.5cm} así \hspace{1.3cm} 	p(A)Ax = p(A)b   \\
+										\end{gather*} 
+									\]
+								</div>
+						  	<li> Principal fuente para obtener resultados más eficientes computacionalmente. </li>	
+						</ul>
+					</section>
+					<section>
+						<h3 align="left"> Formulación Matemática </h3>
+						<div>
+							\[	
+								\begin{gather*}
+									De:  Ax = b \hspace{0.2cm} \Longrightarrow MAx = Mb, \hspace{0.2cm} cond(MA) < cond(A)
+								\end{gather*} 
+							\]
+						<p>\[ \begin{gather*} A = M - N, \hspace{0.2cm} donde \hspace{0.2cm}  M \end{gather*} \] es una matriz no singular, entonces </p>
+						<div>
+							\[
+								\begin{gather*}
+							 		(M - N)x = b 						\\
+								  	Mx = Nx + b 						\\
+								  	x = M^{-1}Nx + M^{-1}b 			\\
+								  	x = M^{-1}(M - A) + M^{-1}b 		\\
+								  	x = (I - M^{-1}A)x + M^{-1}b 	\\
+								\end{gather*} 
+							\]
+						</div>
 					</section>
 
-				</section>				
+					<section>
+						<p> En este caso para que el sistema lineal converja, se debe cumplir que &rho;(I - M<sup>-1</sup>A) < 1. Además
+							mientras el radio espectral sea más cerca a cero entonces la velocidad de convergencia será mayor.
+							Los precondicionadores deben cumplir principalmente dos propiedades:</p>
+						<ul>
+							<li> Facilidad de implementación (bajo coste computacional). </li>
+							<li> Debe mejorar la convergencia del sistema lineal. </li>
+						</ul>
+					</section>
 
+					<section>
+						<h3 align="left"> Algunos Precondicionadores</h3>
+						<p> Asumiendo <i> A = L + D + L<sup>T</sup> </i>  una matriz simétrica definida positiva, para distintas matrices M tenemos: </p>
+						<ul>
+							<li> M = D: Jacobi </li>
+							<li> M = L + D: Gauss-Seidel </li>
+							<li> M = (1/ ω)(D + ωL):  SOR </li>
+							<li> M = HH<sup>T</sup>, donde H es cercana a L: Factorización incompleta de Cholesky </li>
+						</ul>
+					</section>
 
-				<!-- *********************************************************************************** -->
+					<section>
+						<h3 align="left"> Otros Precondicionadores </h3>
+						<ul>
+							<li> Factorización incompleta LU </li>
+							<li> SSOR </li>
+							<li> Gradiente Conjugado </li>
+							<li> Inversa Aproximada </li>
+							<li> Polinomiales </li>
+						</ul>
+					</section>
+
+					<section>
+						<h3 align="left"> Ejemplo </h3>
+						<div>
+							<img width="500" height="500" data-src="resources/imgs/Example_preCG.png">
+						</div>
+					</section>
+				</section>
+
+				<section> 
+					<section>
+						<h1> MÉTODOS ITERATIVOS </h1>
+					</section>
+					<section>
+						<p> La importancia de los métodos iterativos en álgebra lineal se deriva de un simple hecho: los métodos directos requieren de O(n<sup>3</sup>). Es así que para matrices con <i> n > 10 <sup> 3 </sup> </i> se va volviendo intratable el no pensar resolverlo con un algoritmo iterativo. </p>
+						<p>Aunque los métodos iterativos requieren menos almacenamiento no tienen la fiabilidad de los métodos directos en cuanto a precisiones de solución se requiere.
+						</p>
+					</section>
+					<section>
+						<p> Ecuación Diferencial Parcial de segundo orden con coeficientes constantes: </p>
+						<div>
+							\[	\begin{gather*}
+									au_{xx} + bu_{xy} + cu_{yy} + du_{x} + eu_{y} + fu = F(x, y)
+								\end{gather*} 
+							\]
+						</div>
+						<p> Ecuación Diferencial Parcial de tipo Elíptica </p>
+						<div>
+							\[
+								\begin{gather*}
+									b^{2} - 4ac < 0
+								\end{gather*} 
+							\]
+						</div>
+						<p> Dan lugar a matrices de grandes dimensiones <font color=#66490A><b>sparse</b></font> </p>
+					</section>
+					<section>
+						<h3 align="left"> Matriz sparce </h3>
+						<div>
+							<img width="500" height="500" data-src="resources/imgs/sparse.png">
+						</div>
+					</section>
+				</section>	
+
+				<section> 
+					<section>
+						<h1> Técnicas de Discretización - Diferencias Finitas - Aplicaciones </h1>
+					</section>
+					<section>
+						<h3 align="left"> Ejemplo: 1D - problem </h3>
+						<div align="left">
+							\[
+								\begin{gather*}
+									-u^{''}(x) = f(x) \\
+									 u(0) = u(1) = 0
+								\end{gather*} 
+							\]
+						<p> Ecuación en diferencias: </p>
+							\[
+								\begin{gather*}
+									-u_{i-1} + 2u_{i} - u_{i+1} = h^{2}f_{i}
+								\end{gather*} 
+							\]
+						</div>
+						<div>
+							<img width="360" height="240" data-src="resources/imgs/1d_problem.jpg" align="center">
+						</div>
+					</section>
+					<section>
+						<h3 align="left"> Ejemplo: Esquemas de Viento </h3>
+						<div align="left" >
+							\[
+								\begin{gather*}
+									-au^{''} + bu^{'} = 0 ,  \hspace{0.2cm}	0 < x < L = 1 \\
+									u(0) = 0, u(L) = 1
+								\end{gather*} 
+							\]
+						<p> Ecuación en diferencias: </p>
+							\[
+								\begin{gather*}
+									-(1-c)u_{i+1} + 2u_{i} - (1+c)u_{i-1} = 0 
+								\end{gather*} 
+							\]
+						</div>
+						<div>
+							<img width="360" height="220" data-src="resources/imgs/esq_viento.jpg" align="center">
+						</div>
+					</section>
+					<section>
+						<h3 align="left"> Ejemplo: Ecuación de Laplace </h3>
+						<div>
+							\[
+								\begin{gather*}
+									u_{xx} + u_{yy} = 0, \\ 
+									u_{x}(0,y) = 0, u_{y}(a,y) = 0, \hspace{0.2cm} 0 < y < b \\
+									u(x,0) = 0, u(x,b) = f(x) , \hspace{0.2cm}  0 < x < a
+								\end{gather*} 
+							\]
+						</div>
+						<p> </p>
+						<div>
+							\[
+								\begin{gather*}
+									u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1} - 4u_{i,j} = 0 
+								\end{gather*} 
+							\]
+						</div>
+						<div>
+							<img width="400" height="120" data-src="resources/imgs/2d_problem.jpg" align="center">
+						</div>
+					</section>
+				</section>	
+
+				<!-- - - - - - - - - - END Christian - - - - - - - - - - - -->
 
 
 
