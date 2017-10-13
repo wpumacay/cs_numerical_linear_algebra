@@ -1,0 +1,892 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{upgreek}
+\usepackage{dsfont}
+\usepackage{mdframed}
+%margin package
+\usepackage[margin=1in,includefoot]{geometry}
+%graphics packages
+\usepackage{graphicx}
+\usepackage{float}
+%pseudocode packages
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{listings}
+
+
+\begin{document}
+
+\begin{enumerate}
+
+%% PROBLEMA 6 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Enunciado %%%%
+\item Asumiendo que la factorizaci\'on LU de la matriz A existe, probar que :
+\begin{itemize}
+%% PART a) -----------------------
+\item $A$ puede ser escrita en la forma :
+
+\begin{gather*}
+A = L D U_{1}
+\end{gather*}
+donde $D$ es una matriz diagonal, y $L$ y $U_{1}$ son matrices triangulares unitarias ( con $1$ en la diagonal principal ) inferior y superior respectivamente.\\
+
+%% Solución %%%%
+
+Empecemos por escribir $A$ como su factorizaci\'on $LU$, y de ahí procedamos a formar la factorizaci\'on $LDU_{1}$, como sigue : \\
+
+Tenemos
+\begin{gather*}
+A = LU, U = 
+\begin{bmatrix}
+	u_{11}  & u_{12} & \hdots & u_{1n} \\
+	   0    & u_{22} \\
+	 \vdots && \ddots \\
+	   0    & \hdots && u_{nn}
+\end{bmatrix}
+\end{gather*}
+Y queremos expresarlo en la forma
+\begin{gather*}
+A = LDQ,\textit{ } D = 
+	\begin{bmatrix}
+		d_{11}  & 	0	 & \hdots & 0 \\
+		   0    & d_{22} \\
+		 \vdots && \ddots \\
+		   0    & \hdots && d_{nn}		   
+	\end{bmatrix}
+Q = 
+	\begin{bmatrix}
+		   1    & q_{12} & \hdots & q_{1n} \\
+		   0    &    1    \\
+		 \vdots && \ddots \\
+		   0    & \hdots && 1
+	\end{bmatrix}
+\end{gather*}
+
+Bastaría con poder probar que podemos expresar $U$ como $U = DQ$, para lo cu\'al analizaremos el elemento $u_{ij}$ de $U$ para poder sacar una correspondencia con los elementos $d_{ij}$ y $q_{ij}$ de las otras matrices. Si llegamos a poder expresar todo $u_{ij}$ en funci\'on de $d_{ij}$ y $q_{ij}$ entonces tendremos que podemos expresar la matriz $U$ en funci\'on de $D$ y $Q$. Procedamos entonces comparando los t\'erminos, as\'i :
+
+\begin{gather*}
+D_{ij} = 
+	\begin{cases}
+		0,	& i \neq j \\
+		d_{ii},	& i = j
+	\end{cases},
+Q_{ij} = 
+	\begin{cases}
+		q_{ij},	& i < j \\
+		1	  ,	& i = j \\
+		0	  ,	& i > j
+	\end{cases}, \rightarrow 
+DQ_{ij} = 
+	\begin{cases}
+		d_{ii} * q_{ij}	,	& i < j \\
+		d_{ii}			,	& i = j \\
+		0	  			,	& i > j
+	\end{cases}\\
+U_{ij} = 
+	\begin{cases}
+		u_{ij},	& i < j \\
+		u_{ii},	& i = j \\
+		0	  ,	& i > j	
+	\end{cases}
+\end{gather*}
+
+De comparar las reglas de correspondencia para cada $i,j$ en los rangos dados, tenemos que :
+
+\begin{gather*}
+u_{ii} = d_{ii}, i = j\\
+u_{ij} = d_{ii}q_{ij}, i < j \\
+\rightarrow 
+D_{ij} = 
+	\begin{cases}
+		0	  ,	& i \neq j \\
+		u_{ii},	& i = j
+	\end{cases},
+Q_{ij} = 
+	\begin{cases}
+		\frac{u_{ij}}{u_{ii}} ,	& i < j \\
+		1	  				  ,	& i = j \\
+		0	  				  ,	& i > j
+	\end{cases} 
+\end{gather*}
+
+Por lo que si la factorizaci\'on $A=LU$ existe, podemos expresar $A$ como $A=LDQ$, siendo $D$ y $Q$ matrices diagonal y triangular superior-unitaria con elementos en funci\'on de la matrix $U$ seg\'un la f\'ormula anterior.
+
+%% PART b) -----------------------
+
+% Enunciado %%%%
+\item Si $A$ es sim\'etrica, entonces :
+\begin{gather*}
+A = LDL^{T}
+\end{gather*}
+
+%% Solución %%%%
+Si $A$ es sim\'etrica, entonces $A=A^{T}$. Reemplazando la factorizaci\'on anterior y usando las propiedades de la transpuesta tenemos :
+
+\begin{gather*}
+A = LDU \rightarrow A^{T} = (LDU)^{T} = U^{T}D^{T}L^{T} = U^{T}DL^{T} \\
+\rightarrow LDU = U^{T}DL^{T}
+\end{gather*}
+
+De lo anterior, podemos observar que la igualdad se cumple si tenemos que $U=L^{T}$, ya que tendr\'iamos que :
+\begin{gather*}
+A = LDU = LD(L^{T}) = A^{T} = U^{T}DL^{T} = (L)DL^{T}
+\end{gather*}
+
+Para probar esto, procederemos a usar inducci\'on de la siguiente forma :
+
+\begin{itemize}
+\item El caso base es f\'acil de probar, usando $k = 2$, para lo cu\'al usamos: 
+\begin{gather*}
+U = 
+\begin{bmatrix}
+	1  & u_{12} \\
+	0  &   1
+\end{bmatrix}, 
+L = 
+\begin{bmatrix}
+	   1    &   0    \\
+	l_{21}  &   1
+\end{bmatrix}\\
+\rightarrow
+U^{T}DL^{T} = 
+\begin{bmatrix}
+	   d_{11}     &   d_{11}u_{12}    \\
+	d_{11}l_{21}  &   d_{22} + d_{11}l_{21}u_{12}
+\end{bmatrix}\\
+\rightarrow
+LDU = 
+\begin{bmatrix}
+	   d_{11}     &   d_{11}l_{21}    \\
+	d_{11}u_{12}  &   d_{22} + d_{11}l_{21}u_{12}
+\end{bmatrix}
+\end{gather*}
+
+Igualando, tenemos que $l_{21} = u_{12}$, por lo que $U = L^{T}$, lo cu\'al prueba el caso base.\\
+
+\item Asumamos que para un orden $k = n$ se cumple lo siguiente :
+\begin{gather*}
+U^{T}DL^{T} = LDU \rightarrow U = L^{T}
+\end{gather*}
+Usaremos esto para probar el caso $k = n+1$.\\
+
+\item Probemos que para $k = n + 1$ se cumple $U'^{T}D'L'^{T} = L'D'U' \rightarrow U' = L'^{T}$. Para esto, formemos la matrices de la siguiente forma :
+
+\begin{gather*}
+U'^{T}D'L'^{T} = 
+\begin{bmatrix}
+	U^{T}_{nxn}  & \theta_{n+1,1} \\
+	 u^{T}_{n+1} & 1
+\end{bmatrix}
+	\begin{bmatrix}
+		D_{nxn} & 0 \\
+		   0    & d_{n+1}
+	\end{bmatrix}
+		\begin{bmatrix}
+			L^{T}_{nxn}  	   & l^{T}_{n+1} \\
+			    \theta_{1,n+1} & 1
+		\end{bmatrix}
+\\
+L'D'U' = 
+\begin{bmatrix}
+	L_{nxn}  & \theta_{n+1,1} \\
+	 l_{n+1} & 1
+\end{bmatrix}
+	\begin{bmatrix}
+		D_{nxn} & 0 \\
+		   0    & d_{n+1}
+	\end{bmatrix}
+		\begin{bmatrix}
+			U _{nxn}  	& u_{n+1} \\
+		 \theta_{1,n+1} & 1
+		\end{bmatrix}
+\end{gather*}
+
+Si reducimos operando por bloques, tenemos :
+
+\begin{gather*}
+U'^{T}D'L'^{T} =
+\begin{bmatrix}
+	U^{T}DL^{T}  		 & U^{T}Dl^{T}_{n+1} \\
+	 (du)^{T}_{n+1}L^{T} & d_{n+1} + <(du)^{T}_{n+1}, l^{T}_{n+1}>
+\end{bmatrix}
+\\
+LDU =
+\begin{bmatrix}
+			DLU  		 & LDu_{n+1} \\
+	 (dl)_{n+1}U 		 & d_{n+1} + <(dl)_{n+1},u_{n+1}>
+\end{bmatrix}
+\end{gather*}
+
+Si comparamos, tenemos que para el bloque de $nxn$, aplicando la suposici\'on que se hizo por inducci\'on :
+
+\begin{gather*}
+U'^{T}D'L'^{T} = LDU \rightarrow U_{nn} = L^{T}_{nn}
+\end{gather*}
+
+Comparando el resto de las 2 matrices de $n+1,n+1$ tenemos que :
+\begin{gather*}
+U^{t}Dl^{T}_{n+1} = LDu_{n+1} \rightarrow LDl^{T}_{n+1} = LDu_{n+1}\\
+\rightarrow
+LD(l^{T}_{n+1} - u_{n+1}) = \theta \rightarrow u_{n+1} = l^{T}_{n+1} \\
+\rightarrow u_{q,n+1} = l_{n+1,q}, \forall q=1,\hdots,n
+\end{gather*}
+
+Los cu\'ales eran los elementos restantes de las matrices $L',U'$. Dado que obtuvimos $U_{nxn} = L^{T}_{nxn}$, y que $u_{q,n+1} = l_{n+1,q}, \forall q=1,\hdots,n$, tenemos que las matrices $L'_{n+1xn+1}, U'_{n+1xn+1}$ cumplen :
+
+\begin{gather*}
+U'_{n+1xn+1} = L'^{T}_{n+1xn+1}
+\end{gather*}
+
+Lo cu\'al completa la prueba por inducci\'on, lo que nos permite concluir que :
+
+\begin{gather*}
+If : A=A^{T} \rightarrow A=LDL^{T}
+\end{gather*}
+
+%% PART c) -----------------------
+
+
+% Enunciado %%%%%%%
+\item Si $A$ es sim\'etrica y definida positiva, entonces :
+\begin{gather*}
+A=HH^{T}
+\end{gather*} %%%%%
+Donde H es una matriz triangular inferior con elementos positivos en la diagonal principal ( descomposici\'on de Cholesky )\\
+%% Solución
+
+Empecemos de la factorizaci\'on anterior, ya que $A$ es sim\'etrica.
+
+\begin{gather*}
+A = LDL^{T}
+\end{gather*}
+
+Dado que $A$ es definida positiva, tenemos que :
+\begin{gather*}
+q^{T}Aq > 0 \forall q, \rightarrow q^{T}LDL^{T}q = (L^{T}q)^{T}D(L^{T}q) > 0 \forall q
+\end{gather*}
+
+Haciendo $r = L^{T}q$ tenemos que:
+
+\begin{gather*}
+r^{T}Dr > 0 \forall r \rightarrow d_{1}r^{2}_{1} + \hdots + d_{n}r^{2}_{n} > 0 \forall r_{i},d_{i}\\
+\rightarrow d_{i} > 0 \forall i=1,\hdots,n
+\end{gather*}
+
+Obtenemos entonces que la matriz $D$ debe tener elementos positivos en la diagonal principal, lo cu\'al nos permite separar a la matriz $D$ en $D^{1/2}D^{1/2}$, siendo :
+
+\begin{gather*}
+D^{1/2}_{ij} = 
+	\begin{cases}
+			0 		 , i \neq j\\
+		\sqrt{d_{i}} , i=j
+	\end{cases}
+\end{gather*}
+
+Con esto, podemos expresar $A$ de la siguiente manera :
+
+\begin{gather*}
+A = LD^{1/2}D^{1/2}L^{T} = LD^{1/2}( D^{1/2} )^{T}L^{T} = (LD^{1/2})(LD^{1/2})^{T} \\
+\rightarrow A = HH^{T},H= LD^{1/2}
+\end{gather*}
+
+Lo cu\'al comprueba el enunciado.
+
+\end{itemize}
+
+\end{itemize}
+
+%% PROBLEMA 26 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Enunciado %%%%%%%%%
+\item Considere el sistema sim\'etrico $Ax=b$, donde :
+\begin{gather*}
+A = 
+	\begin{bmatrix}
+		0.4445 &  0.4444 & -0.2222\\
+		0.4444 &  0.4445 & -0.2222\\
+	   -0.2222 & -0.2222 &  0.1112
+	\end{bmatrix},
+b = 
+	\begin{bmatrix}
+		0.6667 \\
+		0.6667 \\
+	   -0.3332
+	\end{bmatrix}
+\end{gather*}
+La soluci\'on exacta al sistema es:
+\begin{gather*}
+x = 
+	\begin{bmatrix}
+		1\\1\\1
+	\end{bmatrix}
+\end{gather*}
+
+\begin{itemize}
+%% Part a) --------
+\item Aplique una perturbaci\'on $\delta b$ en $b$, manteniendo $A$ sin alterar. Resuelva el sistema $Ax' = b + \delta b$. Compare $x'$ con $x$. Calcule $Cond(A)$ y verifique la desigualdad respectiva para una perturbaci\'on en $b$.
+\\
+Sea :
+\begin{gather*}
+\delta b = 
+	\begin{bmatrix} 
+		0.0001 \\
+		0.0001 \\
+		0.0001 
+	\end{bmatrix}
+\Rightarrow
+b' = 
+	\begin{bmatrix}
+		 0.6668 \\
+		 0.6668 \\
+		-0.3331
+	\end{bmatrix}
+\end{gather*}
+\\
+Resolviendo el sistema perturbado $Ax'=b'$ tenemos que :
+\begin{gather*}
+x' = 
+	\begin{bmatrix}
+		1.3334 \\
+		1.3334 \\
+		2.3333
+	\end{bmatrix}
+\rightarrow 
+\delta x = 
+	\begin{bmatrix}
+		0.3334 \\
+		0.3334 \\
+		1.3333
+	\end{bmatrix}
+\end{gather*}
+\\
+Calculando el error relativo tenemos que, usando la norma 
+$\Vert \textit{ } \Vert_{\infty}$ :
+
+\begin{gather*}
+\Vert x \Vert_{\infty} = 1,\textit{ }
+\Vert \delta x \Vert_{\infty} = 1.3333 \\
+\Vert \delta b \Vert_{\infty} = 0.0001,\textit{ }
+\Vert  b \Vert_{\infty} = 0.6667 \\
+\Vert  A \Vert_{\infty} = 1.1111,\textit{ }
+\Vert  A^{-1} \Vert_{\infty} = 13333 \rightarrow Cond(A) = 14814.2963
+\end{gather*}
+
+Con lo anterior podemos confirmar que la siguiente desigualdad se cumple :
+
+\begin{gather*}
+\frac{ \Vert \delta x \Vert_{\infty} }{\Vert x \Vert_{\infty}} = 1.3333 \\
+Cond(A) \frac{ \Vert \delta b \Vert_{\infty} }{ \Vert b \Vert_{\infty} } = 2.22 \geq 1.3333 \\
+\rightarrow 
+	\frac{ \Vert \delta x \Vert_{\infty} }{\Vert x \Vert_{\infty}} 
+	\leq 
+	Cond(A) \frac{ \Vert \delta b \Vert_{\infty} }{ \Vert b \Vert_{\infty} }
+\end{gather*}
+
+Con lo cu\'al vemos que se satisface la desigualdad para este caso.
+
+%% Part b) --------
+\item Aplique una pequeña perturbaci\'on $\Delta A$ en $A$ tal que 
+$ \Vert \Delta A \Vert \leq 1 / \Vert A^{-1} \Vert $. Resuelva el sistema 
+$ ( A + \Delta A ) x' = b $. Compare $x'$ con $x$ y verifique la desigualdad apropiada respecto a una perturbaci\'on en la matriz $A$ y el n\'umero condicionante.\\
+%% Solución
+\\
+Elijamos una perturbaci\'on que satisfaga las condiciones. Para esto, escogemos :
+\begin{gather*}
+\Delta A = 
+	\begin{bmatrix}
+		0 & 0 & 0 \\
+		0 & 0 & 0 \\
+		1 & 0 & 0
+	\end{bmatrix}  5 x 10^{-5}
+\end{gather*}
+
+Resolviendo el sistema $A'x' = b$ tenemos que :
+\begin{gather*}
+x' = 
+	\begin{bmatrix}
+		1.125 \\
+		1.125 \\
+		1.500
+	\end{bmatrix}
+\rightarrow
+\delta x = 
+	\begin{bmatrix}
+		0.125 \\
+		0.125 \\
+		0.500
+	\end{bmatrix}
+\end{gather*}
+
+Calculando las normas necesarias usando $\Vert \textit{ } \Vert_{\infty}$ tenemos que :
+\begin{gather*}
+\Vert x \Vert_{\infty} = 1,\textit{ }
+\Vert \delta x \Vert_{\infty} = 0.5 \\
+\Vert  \Delta A \Vert_{\infty} = 1.1111,\textit{ }
+\end{gather*}
+
+Usando estas normas, podemos comprar que se verifica la desigualdad correspondiente a una perturbaci\'on y el n\'umero condicionante :
+\begin{gather*}
+\frac{ \Vert \delta x \Vert_{\infty} }{\Vert x \Vert_{\infty}} = 0.5 \\
+Cond(A) \frac{ \Vert \Delta A \Vert_{\infty} }{ \Vert A \Vert_{\infty} } /
+( 1 - Cond(A) \frac{ \Vert \Delta A \Vert_{\infty} }{ \Vert A \Vert_{\infty} } 	) =  2.0 \\
+\rightarrow 
+\frac{ \Vert \delta x \Vert_{\infty} }{\Vert x \Vert_{\infty}}
+\leq
+Cond(A) \frac{ \Vert \Delta A \Vert_{\infty} }{ \Vert A \Vert_{\infty} } /
+( 1 - Cond(A) \frac{ \Vert \Delta A \Vert_{\infty} }{ \Vert A \Vert_{\infty} } 	)\\
+\end{gather*}
+Con lo cu\'al comprobamos que se satisface la desigualdad correspondiente para este caso.
+\\
+\end{itemize}
+%% PROBLEMA 5 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Enunciado
+\item Implemente un programa que realice la descomposi\'on de Cholesky
+\\
+\\
+%% Solución
+Para esta descomposici\'on, usando la regla de correspondencia luego de igualar 
+$A = LL^{T}$ tenemos que se cumple la siguiente relaci\'on :
+
+\begin{gather*}
+L_{jj} = \sqrt{ A_{jj} - \sum_{k=1}^{j-1} L_{jk}^{2} } \\
+L_{ij} = \frac{1}{L_{jj}}( A_{ij} - \sum_{k=1}^{j-1} L_{ik}L_{kj} ), i>j
+\end{gather*}
+Usando esta relaci\'on podemos implementar el siguiente algoritmo en $c++$.
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\lstset{language=C++}
+\begin{lstlisting}[frame=single]
+namespace NLA {
+  namespace decompositions {
+    namespace lu {
+        arma::mat cholesky( const mat &A )
+        {
+            assert( A.n_cols == A.n_rows );
+
+            int N = A.n_cols;
+
+            arma::mat _H = arma::zeros<mat>( N, N );
+
+            for ( int p = 0; p < N; p++ )
+            {
+                double _sum = 0;
+                for ( int k = 0; k <= p - 1; k++ )
+                {
+                    _sum += ( _H( p, k ) * _H( p, k ) );
+                }
+                _H( p, p ) = sqrt( A( p, p ) - _sum );
+
+                for ( int q = p + 1; q < N; q++ )
+                {
+                    double _sum = 0;
+                    for ( int k = 0; k <= p - 1; k++ )
+                    {
+                        _sum += ( _H( q, k ) * _H( p, k ) );
+                    }
+                    _H( q, p ) = ( A( q, p ) - _sum ) / _H( p, p );
+                }
+            }
+
+            return _H;
+        }
+    }
+  }
+}
+\end{lstlisting}
+Estamos usando la librer\'ia $Armadillo$ para poder manejar matrices y no tener que crear nuestras propias clases para trabajar con matrices y vectores.
+
+A continuaci\'on se muestra una prueba con una matriz definida positiva, usando nuestra implementaci\'on y compar\'andola con el resultado que se obtiene al usar la factorizaci\'on por defecto que usa la librer\'ia $Armadillo$.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.75]{/home/wilsan/Documents/wilbert/cs_master/courses/term1/numerical_linear_algebra/repo/hw/imgs/cholesky_test.png}
+	\caption{Probando nuestra implementaci\'on de la descomposici\'onn de Cholesky}
+	\label{fig:img_pecc}
+\end{figure}
+
+%% PROBLEMA 11 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\item Caracterize el fill-in para una matriz $A \in R^{nxn}$ que tiene s\'olo entradas no nulas en la diagonal principal, en la primera columna y en la \'ultima fila. Proponga una permutaci\'on que reduzca el fill-in.
+\\
+\\
+Expresemos la matriz $A$ as\'i:
+
+\begin{gather*}
+A = 
+	\begin{bmatrix}
+		x & 0 & 0 & \hdots & 0 \\
+		x & x & 0 & \hdots & 0 \\
+		x & 0 & x \\
+		\vdots & \vdots && \ddots & \vdots \\
+		x & x & x & \hdots & x
+	\end{bmatrix}
+\end{gather*}
+
+Si usamos para la factorizaci\'on el m\'etodo de eliminaci\'on gaussiana (GEM) sin pivotamiento, tendremos que las matrices resultantes ser\'an de la forma :
+
+\begin{gather*}
+L = 
+	\begin{bmatrix}
+		1 & 0 & 0 & \hdots & 0 \\
+		x & 1 & 0 & \hdots & 0 \\
+		x & 0 & 1 \\
+		\vdots & \vdots && \ddots & \vdots \\
+		x & x & x & \hdots & 1
+	\end{bmatrix},
+U = 
+	\begin{bmatrix}
+		x & 0 & 0 & \hdots & 0 \\
+		0 & x & 0 & \hdots & 0 \\
+		0 & 0 & x \\
+		\vdots & \vdots && \ddots & \vdots \\
+		0 & 0 & 0 & \hdots & x
+	\end{bmatrix}
+\end{gather*}
+\\
+Lo cu\'al no introduzco fill-in en ninguna de las matrices. En cambio, si usamos GEM con pivotamiento parcial, veremos un comportamiento diferente.
+
+En el peor caso, supongamos que el priver pivot no es el mayor en la columna. Por esto, tendremos que permutar alguna fila. Supongamos que la que permutamos es la \'ultima fila, lo cu\'al en el primer paso de la GEM nos dar\'a :
+
+\begin{gather*}
+\begin{bmatrix}
+	x & 0 & 0 & \hdots & 0 \\
+	x & x & 0 & \hdots & 0 \\
+	x & 0 & x \\
+	\vdots & \vdots && \ddots & \vdots \\
+	x & x & x & \hdots & x
+\end{bmatrix} 
+\rightarrow_{perm.}
+\begin{bmatrix}
+	x & x & x & \hdots & x \\
+	x & x & 0 & \hdots & 0 \\
+	x & 0 & x \\
+	\vdots & \vdots && \ddots & \vdots \\
+	x & 0 & 0 & \hdots & x
+\end{bmatrix} 
+\rightarrow_{elim.}
+\begin{bmatrix}
+	x & x & x & \hdots & x \\
+	0 & x & x & \hdots & x \\
+	0 & x & x \\
+	\vdots & \vdots && \ddots & \vdots \\
+	0 & x & x & \hdots & x
+\end{bmatrix} 
+\end{gather*}
+
+De lo anterior, vemos que en el primer paso ya se han potencialmente introducido elementos no nulos en partes de la matriz $A$ que eran antes nulas. Si continuamos el proceso, tendremos potencialmente las matrices $L,U$ de la siguiente forma:
+
+\begin{gather*}
+L = 
+	\begin{bmatrix}
+		1 & 0 & 0 & \hdots & 0 \\
+		x & 1 & 0 & \hdots & 0 \\
+		x & x & 1 \\
+   \vdots & \vdots && \ddots & \vdots \\
+		x & x & x & \hdots & 1
+	\end{bmatrix},
+U = 
+	\begin{bmatrix}
+		x & x & x & \hdots & x \\
+		0 & x & x & \hdots & x \\
+		0 & 0 & x \\
+		\vdots & \vdots && \ddots & \vdots \\
+		0 & 0 & 0 & \hdots & x
+	\end{bmatrix}
+\end{gather*}
+
+Lo cu\'al vemos que incurre en fill-in en ambas matrices, siendo el fill-in dos regiones triangulares de dimensiones $n-2$ y $n-1$ en cada caso ( L y U respectivamente ).
+\\
+Un ejemplo num\'erico se muestra a continuaci\'on :
+\begin{gather*}
+A =
+\begin{bmatrix}
+   1.2  &    0    &  0   &  0   &  0 \\
+   2.3  &   1.7   &  0   &  0   &  0 \\
+   3.5  &    0    &  2.1 &  0   &  0 \\
+   4.1  &    0    &  0   &  3.1 &  0 \\
+   5.1  &   4.7   &  4.3 &  3.9 &  4.2
+\end{bmatrix}\\\\
+\rightarrow
+L = 
+\begin{bmatrix}
+       1   &     0    &     0  &    0   &  0 \\
+     0.804 &     1    &     0  &    0   &  0 \\
+     0.686 &   0.854  &     1  &    0   &  0 \\
+     0.451 &   0.111  & -0.741 &    1   &  0 \\
+     0.235 &   0.293  &  	0  &  0.244 &  1
+\end{bmatrix},
+U = 
+\begin{bmatrix}
+   5.1 &  4.7	&  4.3 	 &  3.9     &  4.2     \\
+    0  & -3.778 & -3.457 & -0.035   & -3.377   \\
+    0  &    0   &  2.1   & -2.646   &  0       \\
+    0  &  	0	&   0    & -3.715   & -1.51915 \\
+    0  &  	0   &   0    &   0  	&  0.37104
+\end{bmatrix}
+\end{gather*}
+\\
+Vemos que, la matriz $A$ tendr\'a que hacer permutaciones cuando se use GEM, dado que los pivots a usar no est\'an en la diagonal principal. Se observa adem\'as que el fill-in es similar a lo que se esperaba para este caso.
+\\
+Para evitar eso, se puede hacer una permutaci\'on inicial de las primeras filas-columna con las \'ultimas fila-columna. Esto nos dejar\'ia con una matriz de la siguiente forma.
+
+\begin{gather*}
+A = 
+	\begin{bmatrix}
+		x & x & x & x & \hdots & x \\
+		0 & x & 0 & 0 & \hdots & x \\
+		0 & 0 & x & 0 & \hdots & x \\
+		\vdots & \vdots && \ddots && \vdots \\
+		0 & 0 & 0 & \hdots && x
+	\end{bmatrix}
+\end{gather*}
+
+Esta matriz es ya triangular superior, por lo que al hacer la factorizaci\'on $LU$ tendremos que $L$ es la identidad de orden $n$ y $U$ es igual a la matriz $A$. Se observa de esto que no existe fill-in en $L$ ni $U$.
+\\ 
+Analizando el mismo ejemplo, vemos que al permutar la matriz y hacer la factorizaci\'on tendremos:
+
+\begin{gather*}
+A' =
+\begin{bmatrix}
+   4.2  &   4.7   &  4.3 &  3.9 & 5.1 \\
+    0   &   1.7   &  0   &  0   & 2.3 \\
+    0   &    0    &  2.1 &  0   & 3.5 \\
+    0   &    0    &  0   &  3.1 & 4.1 \\
+    0   &    0    &  0   &  0   & 1.2
+\end{bmatrix}\\\\
+\rightarrow
+L' = 
+\begin{bmatrix}
+       1   &     0    &     0  &    0   &  0 \\
+       0   &     1    &     0  &    0   &  0 \\
+       0   &     0    &     1  &    0   &  0 \\
+       0   &     0    &     0  &    1   &  0 \\
+       0   &     0    &  	0  &    0   &  1
+\end{bmatrix},
+U' = 
+\begin{bmatrix}
+   4.2  &   4.7   &  4.3 &  3.9 & 5.1 \\
+    0   &   1.7   &  0   &  0   & 2.3 \\
+    0   &    0    &  2.1 &  0   & 3.5 \\
+    0   &    0    &  0   &  3.1 & 4.1 \\
+    0   &    0    &  0   &  0   & 1.2
+\end{bmatrix}
+\end{gather*}
+Vemos que no se incurre en fill-in en el ejemplo gracias a la permutaci\'on inicial que se hizo.
+
+%% PROBLEMA 7 - Zoser %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\item Asumiendo que la factorizaci\'on $LU$ de la matriz $A$ existe, desarrolle un algoritmo para calcular $U$ por filas y $L$ por columnas directamente de la ecuaci\'on $A = LU$ ( Doolittle reduction )
+\\
+Partiendo de la expresi\'on de la factorizaci\'on $LU$.
+\begin{gather*}
+A = 
+	\begin{bmatrix}
+		a_{11} & a_{12} & \hdots & a_{1n} \\
+		a_{21} & a_{22} & \hdots & a_{2n} \\
+		\vdots &&& \vdots \\
+		a_{n1} & a_{n2} & \hdots & a_{nn}
+	\end{bmatrix}
+= 
+LU
+=
+	\begin{bmatrix}
+		   1   &    0   & \hdots &   0    \\
+		l_{21} &    1   & \hdots &   0    \\
+		\vdots &&& \vdots \\
+		l_{n1} & l_{n2} & \hdots &   1
+	\end{bmatrix}
+	\begin{bmatrix}
+		u_{11} & u_{12} & \hdots & u_{1n} \\
+		   0   & u_{22} & \hdots & u_{2n} \\
+		\vdots &&& \vdots \\
+		   0   &    0   & \hdots & u_{nn}
+	\end{bmatrix}	
+\end{gather*}
+
+Operando tendremos una correspondencia entre los elementos $u_{ij}$, $l_{ij}$ y $a_{ij}$.
+
+\begin{gather*}
+u_{ij} = a_{ij} - \sum_{k=1}^{i-1}l_{ik}u_{kj} \\
+l_{ij} = \frac{a_{ij} - \sum_{k=1}^{j-1}l_{ik}u_{kj}}{u_{jj}}
+\end{gather*}
+
+La primera expresi\'on la usaremos iterando sobre la fila $i$ para generar cada elemento de la fila $i$ de $U$. Para la segunda expresi\'on, iteraremos sobre la columna $j$ para generar cada elemento de la columna $j$ de $L$. Esto lo expresamos en pseudoc\'odigo acontinuaci\'on.
+\begin{algorithm}[H]
+\caption{Reducci\'on de Doolittle para la descomposici\'on LU}
+\begin{algorithmic}
+\For{i in 1 ... N}
+	\For{j in 1 ... N}
+		\State // Calculando por filas los elementos de U
+		\If{ $i \leq j$ }
+			\State $u_{ij}$ = $a_{ij}$
+			\For{k in 1 ... i}
+				\State $u_{ij} -= l_{ik} u_{kj}$
+			\EndFor
+		\Else
+			\State $u_{ij}$ = 0
+		\EndIf
+		
+		\State // Calculando por columnas los elementos de L
+		\If{ $i > j$ }
+			\State $l_{ij}$ = $a_{ij}$
+			\For{k in 1 ... j}
+				\State $l_{ij} -= l_{ik} u_{kj}$
+			\EndFor
+			\State $l_{ij}$ = $l_{ij}$ / $u_{jj}$
+		\ElsIf
+			\State $l_{ij}$ = 1
+		\Else
+			\State $u_{ij}$ = 0
+		\EndIf
+		
+	\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+%% PROBLEMA 27 - Zoser %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\item Probar la desigualdad :
+\begin{gather*}
+\frac{ \Vert \delta x \Vert }{ \Vert x + \delta x \Vert } \leq Cond(A) \frac{ \Vert \Delta A \Vert }{ \Vert A \Vert }
+\end{gather*}
+Donde $Ax = b$ y $ ( A + \Delta A )( x + \delta x ) = b $.
+Verifique la desigualdad para el sistema :
+\begin{gather*}
+\begin{bmatrix}
+	    1 		& \frac{1}{2} & \frac{1}{3} \\
+	\frac{1}{2} & \frac{1}{3} & \frac{1}{4} \\
+	\frac{1}{3} & \frac{1}{4} & \frac{1}{5}
+\end{bmatrix} 
+	\begin{bmatrix}
+		x_{1}\\
+		x_{2}\\
+		x_{3}
+	\end{bmatrix} =
+		\begin{bmatrix}
+			1 \\
+			1 \\
+			1
+		\end{bmatrix}
+, \textit{ usando } \Delta A = 
+	\begin{bmatrix}
+		0 & 0 & 0.00003 \\
+		0 & 0 & 0 \\
+		0 & 0 & 0
+	\end{bmatrix}
+\end{gather*}
+\\
+Primero, partamos de :
+\begin{gather*}
+	Ax = b = ( A + \Delta A )( x + \delta x ) \\
+	Ax = Ax + \Delta A x + \Delta A \delta x + A \delta x \\
+	-A \delta x = \Delta A ( x + \delta x ) \\
+	\rightarrow -\delta x = A^{-1}\Delta A ( x + \delta x )
+\end{gather*}
+De lo anterior, tomando una norma vectorial a cada lado de la expresi\'on y ordenando la expresi\'on tenemos que :
+\begin{gather*}
+\Vert \delta x \Vert = \Vert A^{-1}\Delta A ( x + \delta x ) \Vert \\
+\Vert \delta x \Vert = 
+		\frac{ \Vert ( A^{-1}\Delta A ) ( x + \delta x ) \Vert }{ \Vert x + \delta x \Vert }
+			\Vert x + \delta x \Vert
+\end{gather*}
+
+La \'ultima expresi\'on puede ser acotada superiormente usando la definici\'on de la norma de una matriz inducida por normas vectoriales.
+\begin{gather*}
+\Vert \delta x \Vert = 
+		\frac{ \Vert ( A^{-1}\Delta A ) ( x + \delta x ) \Vert }{ \Vert x + \delta x \Vert }
+			\Vert x + \delta x \Vert \leq
+		\Vert A^{-1} \Delta A \Vert \Vert x + \delta x \Vert
+\end{gather*}
+Usando la propiedad submultiplicativa de las normas matriciales inducidas, tenemos que :
+\begin{gather*}
+\Vert \delta x \Vert \leq
+		\Vert A^{-1} \Delta A \Vert \Vert x + \delta x \Vert \leq 
+		\Vert A^{-1} \Vert \Vert \Delta A \Vert \Vert x + \delta x \Vert
+\end{gather*}
+Ordenando la expresi\'on, tenemos que:
+\begin{gather*}
+\Vert \delta x \Vert \leq 
+		\Vert A^{-1} \Vert \Vert \Delta A \Vert \Vert x + \delta x \Vert =
+		\Vert A^{-1} \Vert \Vert A \Vert \frac{ \Vert \Delta A \Vert }{ \Vert A \Vert } \Vert x + \delta x \Vert = Cond(A) \frac{ \Vert \Delta A \Vert }{ \Vert A \Vert } \Vert x + \delta x \Vert\\
+\rightarrow
+\frac{ \Vert \delta x \Vert }{ \Vert x + \delta x \Vert } \leq Cond(A) \frac{ \Vert \Delta A \Vert }{ \Vert A \Vert }
+\end{gather*}
+Lo cu\'al prueba la desigualdad.
+\\
+Para el sistema de ejemplo, cuya soluci\'on es $x = \begin{bmatrix} 3\\-24\\30 \end{bmatrix}$ , tenemos ( usando la norma infinita como norma matricial y vectorial ):
+\begin{gather*}
+\Vert x \Vert_{\infty} = 30 \\
+\Vert A \Vert_{\infty} = 1.833 \\
+\Vert \Delta A \Vert_{\infty} = 0.00003 \\
+A^{-1} = 
+\begin{bmatrix}
+	9	&  -36	&	30 \\
+   -36	&  192	&  -180 \\
+    30	& -180 	& 	180
+\end{bmatrix} \rightarrow \Vert A^{-1} \Vert_{\infty} = 408 \\
+x + \delta x = x' = \begin{bmatrix} 2.9919\\-23.9676\\29.9730 \end{bmatrix} \\
+\rightarrow \Vert x + \delta x \Vert_{\infty} = 29.9730 \\
+\delta x = x' - x = \begin{bmatrix} -0.008\\0.032\\-0.027 \end{bmatrix} \rightarrow \Vert \delta x \Vert_{\infty} = 0.032
+\end{gather*}
+Reemplazando, tenemos que :
+\begin{gather*}
+\frac{ \Vert \delta x \Vert }{ \Vert x + \delta x \Vert } = \frac{0.032}{29.973} = 0.001 \\
+Cond(A) \frac{ \Vert \Delta A \Vert }{ \Vert A \Vert } = (408)(0.00003) = 0.012 \\
+\end{gather*}
+Lo cu\'al satisface la desigualdad.
+
+%% PROBLEMA 13 - Zoser %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Dados los vectores :
+\begin{gather*}
+v_{1} = [ 1, 1, 1, -1]^{T},\textit{   } v_{2} = [2,-1,-1,1]^{T} \\
+v_{3} = [ 0, 3, 3, -3]^{T},\textit{   } v_{4} = [-1,2,2,1]^{T}
+\end{gather*}
+genere un sistema ortonormal usando el algoritmo de Gram-Schmidt, en forma cl\'asica o modificada, y compare los resultados obtenidos. ¿Cu\'al es la dimensi\'on del espacio generado por los vectores dados?.
+\\
+Usando el m\'etodo de Gram-Shmidt modificado, tenemos que :
+\begin{itemize}
+\item k=1
+	\begin{gather*}
+	q_{1} = \frac{v_{1}}{\Vert v_{1} \Vert} = [0.5, 0.5, 0.5, -0.5]^{T}
+	\rightarrow q_{1} = [0.5, 0.5, 0.5, -0.5]^{T}\\
+	\end{gather*}
+\item k=2
+	\begin{gather*}
+	v_{2}^{(1)} = v_{2} - <v_{2},q_{1}>q_{1} = [2.25, -0.75, -0.75, 0.75]^{T} \rightarrow q_{2} = 		\frac{ v_{2}^{(1)} }{\Vert v_{2}^{(1)} \Vert} = [0.866, -0.289, -0.289, 0.289]\\
+	\end{gather*}
+\item k=3
+	\begin{gather*}
+	v_{3}^{(1)} = v_{3} - <v_{3},q_{1}>q_{1} = [2.25, 0.75, 0.75, -0.75]^{T}\\
+	v_{3}^{(2)} = v_{3}^{(1)} - <v_{3}^{(1)},q_{2}>q_{2} = [0, 0, 0, 0]^{T} \rightarrow v_{3} 	\textit{ es l.d a $v_{1}$, $v_{2}$, por lo que lo descartamos }
+	\end{gather*}
+\item k=4
+	\begin{gather*}
+	v_{4}^{(1)} = v_{4} - <v_{4},q_{1}>q_{1} = [-1.5, 1.5, 1.5, 1.5]^{T}\\
+	v_{4}^{(2)} = v_{4}^{(1)} - <v_{4}^{(1)},q_{2}>q_{2} = [0, 1, 1, 2]^{T} \\
+	v_{4}^{(3)} = v_{4}^{(2)} \textit{ ya que $v_{3}$ es l.d de $v_{1},v_{2}$}
+	\rightarrow q_{4} = \frac{v_{4}^{(3)}}{\Vert v_{4}^{(3)} \Vert}= [0, 0.408, 0.408, 0.816]^{T}
+	\end{gather*}
+\end{itemize}
+Lo cu\'al nos devuelve 3 vectores $q_{1},q_{2},q_{4}$ linealmente ortonormales, los cuales forman una base ortonormal que generan un espacio de dimensi\'on 3.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{enumerate}
+
+
+
+\end{document}

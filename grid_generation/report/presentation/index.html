@@ -1,0 +1,924 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+
+			<div class="slides">
+
+				<!-- PRESENTATION *********************** -->
+				<section>
+					<h4>
+						Precondicionamiento y su utilidad en la generación de mallas con procesos iterativos
+					</h4>
+					<br>
+					<h5> Universidad Católica San Pablo </h5>
+					<h6> Maestría en Ciencias de la Computación </h6>
+					<ol>
+						<li> Christian Córdova Estrada</li>
+						<li> Wilbert Pumacay</li>
+						<li> Joel Gallegos</li>
+						<li> Jose Castro</li>
+					</ol>					 
+				</section>
+				<!-- - - - - - - BEGIN Christian - - - - - - - - - - - - -->
+				<section>
+					<section>				
+						<h2> PRECONDICIONAMIENTO </h2>
+					</section>
+					<section>
+						<h3 align="left" >Historia </h3>
+						<ul>
+							<li> Se utilizó por primera vez en un artículo de <font color=#66490A><b>Alan Turing</b></font> (1948).</li>
+						  	<li> Primer uso del término en relación con los métodos iterativos se encuentra en un documento de <font color=#66490A><b>D. Evans</b></font> sobre la aceleración que aplicaba el ruso <font color=#66490A><b>Chebyschev</b></font> en el método de <font color=#66490A><b>SSOR</b></font> en 1968.
+						  	</li>
+						</ul>
+					</section>
+					<section>
+						<h3 align="left"> Historia </h3>
+						<ul>
+							<li> <font color=#66490A><b>Lamberto Cesari</b></font> en 1937 tenía un concepto de precondicionamiento como un medio para poder reducir el número condicionante y así mejorar la convergencia de un proceso iterativo, su idea fue usar un polinomio <i>p(A)</i>:</li>
+								<div>
+									\[
+										\begin{gather*}
+											Ax = b , \hspace{0.5cm} así \hspace{1.3cm} 	p(A)Ax = p(A)b   \\
+										\end{gather*} 
+									\]
+								</div>
+						  	<li> Principal fuente para obtener resultados más eficientes computacionalmente. </li>	
+						</ul>
+					</section>
+					<section>
+						<h3 align="left"> Formulación Matemática </h3>
+						<div>
+							\[	
+								\begin{gather*}
+									De:  Ax = b \hspace{0.2cm} \Longrightarrow MAx = Mb, \hspace{0.2cm} cond(MA) < cond(A)
+								\end{gather*} 
+							\]
+						<p>\[ \begin{gather*} A = M - N, \hspace{0.2cm} donde \hspace{0.2cm}  M \end{gather*} \] es una matriz no singular, entonces </p>
+						<div>
+							\[
+								\begin{gather*}
+							 		(M - N)x = b 						\\
+								  	Mx = Nx + b 						\\
+								  	x = M^{-1}Nx + M^{-1}b 			\\
+								  	x = M^{-1}(M - A) + M^{-1}b 		\\
+								  	x = (I - M^{-1}A)x + M^{-1}b 	\\
+								\end{gather*} 
+							\]
+						</div>
+					</section>
+
+					<section>
+						<p> En este caso para que el sistema lineal converja, se debe cumplir que &rho;(I - M<sup>-1</sup>A) < 1. Además
+							mientras el radio espectral sea más cerca a cero entonces la velocidad de convergencia será mayor.
+							Los precondicionadores deben cumplir principalmente dos propiedades:</p>
+						<ul>
+							<li> Facilidad de implementación (bajo coste computacional). </li>
+							<li> Debe mejorar la convergencia del sistema lineal. </li>
+						</ul>
+					</section>
+
+					<section>
+						<h3 align="left"> Algunos Precondicionadores</h3>
+						<p> Asumiendo <i> A = L + D + L<sup>T</sup> </i>  una matriz simétrica definida positiva, para distintas matrices M tenemos: </p>
+						<ul>
+							<li> M = D: Jacobi </li>
+							<li> M = L + D: Gauss-Seidel </li>
+							<li> M = (1/ ω)(D + ωL):  SOR </li>
+							<li> M = HH<sup>T</sup>, donde H es cercana a L: Factorización incompleta de Cholesky </li>
+						</ul>
+					</section>
+
+					<section>
+						<h3 align="left"> Otros Precondicionadores </h3>
+						<ul>
+							<li> Factorización incompleta LU </li>
+							<li> SSOR </li>
+							<li> Gradiente Conjugado </li>
+							<li> Inversa Aproximada </li>
+							<li> Polinomiales </li>
+						</ul>
+					</section>
+
+					<section>
+						<h3 align="left"> Ejemplo </h3>
+						<div>
+							<img width="500" height="500" data-src="resources/imgs/Example_preCG.png">
+						</div>
+					</section>
+				</section>
+
+				<section> 
+					<section>
+						<h1> MÉTODOS ITERATIVOS </h1>
+					</section>
+					<section>
+						<p> La importancia de los métodos iterativos en álgebra lineal se deriva de un simple hecho: los métodos directos requieren de O(n<sup>3</sup>). Es así que para matrices con <i> n > 10 <sup> 3 </sup> </i> se va volviendo intratable el no pensar resolverlo con un algoritmo iterativo. </p>
+						<p>Aunque los métodos iterativos requieren menos almacenamiento no tienen la fiabilidad de los métodos directos en cuanto a precisiones de solución se requiere.
+						</p>
+					</section>
+					<section>
+						<p> Ecuación Diferencial Parcial de segundo orden con coeficientes constantes: </p>
+						<div>
+							\[	\begin{gather*}
+									au_{xx} + bu_{xy} + cu_{yy} + du_{x} + eu_{y} + fu = F(x, y)
+								\end{gather*} 
+							\]
+						</div>
+						<p> Ecuación Diferencial Parcial de tipo Elíptica </p>
+						<div>
+							\[
+								\begin{gather*}
+									b^{2} - 4ac < 0
+								\end{gather*} 
+							\]
+						</div>
+						<p> Dan lugar a matrices de grandes dimensiones <font color=#66490A><b>sparse</b></font> </p>
+					</section>
+					<section>
+						<h3 align="left"> Matriz sparse </h3>
+						<div>
+							<img width="500" height="500" data-src="resources/imgs/sparse.png">
+						</div>
+					</section>
+				</section>	
+
+				<section> 
+					<section>
+						<h1> Técnicas de Discretización - Diferencias Finitas - Aplicaciones </h1>
+					</section>
+					<section>
+						<h3 align="left"> Ejemplo: 1D - problem </h3>
+						<div align="left">
+							\[
+								\begin{gather*}
+									-u^{''}(x) = f(x) \\
+									 u(0) = u(1) = 0
+								\end{gather*} 
+							\]
+						<p> Ecuación en diferencias: </p>
+							\[
+								\begin{gather*}
+									-u_{i-1} + 2u_{i} - u_{i+1} = h^{2}f_{i}
+								\end{gather*} 
+							\]
+						</div>
+						<div>
+							<img width="360" height="240" data-src="resources/imgs/1d_problem.jpg" align="center">
+						</div>
+					</section>
+					<section>
+						<h3 align="left"> Ejemplo: Esquemas de Viento </h3>
+						<div align="left" >
+							\[
+								\begin{gather*}
+									-au^{''} + bu^{'} = 0 ,  \hspace{0.2cm}	0 < x < L = 1 \\
+									u(0) = 0, u(L) = 1
+								\end{gather*} 
+							\]
+						<p> Ecuación en diferencias: </p>
+							\[
+								\begin{gather*}
+									-(1-c)u_{i+1} + 2u_{i} - (1+c)u_{i-1} = 0 
+								\end{gather*} 
+							\]
+						</div>
+						<div>
+							<img width="360" height="220" data-src="resources/imgs/esq_viento.jpg" align="center">
+						</div>
+					</section>
+					<section>
+						<h3 align="left"> Ejemplo: Ecuación de Laplace </h3>
+						<div>
+							\[
+								\begin{gather*}
+									u_{xx} + u_{yy} = 0, \\ 
+									u_{x}(0,y) = 0, u_{y}(a,y) = 0, \hspace{0.2cm} 0 < y < b \\
+									u(x,0) = 0, u(x,b) = f(x) , \hspace{0.2cm}  0 < x < a
+								\end{gather*} 
+							\]
+						</div>
+						<p> </p>
+						<div>
+							\[
+								\begin{gather*}
+									u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1} - 4u_{i,j} = 0 
+								\end{gather*} 
+							\]
+						</div>
+						<div>
+							<img width="400" height="120" data-src="resources/imgs/2d_problem.jpg" align="center">
+						</div>
+					</section>
+				</section>	
+
+				<!-- - - - - - - - - - END Christian - - - - - - - - - - - -->
+
+
+
+				<!-- FUNDAMENTO TEÓRICO - GENERACIÓN DE MALLAS - JOEL ********************************** -->
+				<section>
+					<h1>GENERACIÓN DE MALLAS</h1>
+				</section>				
+
+				<section> <!-- Este grupo de slides saldrán como verticales -->
+
+					<section>
+						<h3> GENERACIÓN DE MALLAS </h3>
+						<ul>
+							<li>La idea es mallar un espacio dado algunos limites dado un dominio dado.</li>
+							<li>Existen técnicas muy generales, capaces de generar mallas en geometrı́as complejas.</li>
+							<li>También existen técnicas para generar mallas a una gran velocidad, pero son incapaces de mallar geometrı́as de cierta complejidad</li>
+							<li>Dependiendo la geometrı́a del dominio, el coste computacional y la capacidad de control sobre la malla será lo que nos haga decidir por los métodos.</li>
+						</ul>
+					</section>
+					<section>
+						<h3> TIPOS DE MALLAS </h3>
+						<ul>
+							<li>Métodos de generación de malla estructurada:
+								<ul>
+									<li>Algebraicos.</li>
+							  		<li>Basados en EDPs.</li>
+							  		<li>Superposición-deformación de retı́cula.</li>
+							  		<li>Crecimiento estructurado.</li>
+								</ul>
+							</li>
+					  		<li>Métodos de generación de malla no estructurada
+					  			<ul>
+									<li>Inserción de nodos y posterior conexión: Delaunay.</li>
+						  			<li>Generación simultánea de nodos y conectividad: Frente de avance.</li>
+						  			<li>Métodos Multibloque.</li>				  			
+								</ul>
+					  		</li>
+						</ul>
+					</section>
+					<section>
+						<h3> TIPOS DE MALLAS </h3>
+						<div>
+							<table>
+							  	<tr>
+							    	<th>Mallas Estructuradas</th>
+							    	<th>Mallas No Estructuradas</th> 
+							  	</tr>
+							</table>
+							<img width="400" height="400" data-src="resources/imgs/mallaEstructurada.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/mallaNoEstructurada.jpg">							
+						</div>
+						<p>Nuestro Proposito: Mallas Estructuradas</p>
+					</section>
+					<section>
+						<h3> MALLAS ESTRUCTURADAS </h3>
+						<ul>
+							<li>
+							<h4>Métodos Algebraicos Basados en Interpolación.</h4>
+								<p>Se relacionan los puntos de malla del dominio fı́sico con el dominio computacional. Se basa en el uso de técnicas de interpolación y relaciones algebraicas exactas, lo cual permite la obtención rápida de la malla. 
+								</p>
+							</li>
+							<li>
+							<h4>Métodos Basados en PDE's</h4>
+								<p>Se resuelve un sistema de PDE’s para localizar los puntos en el interior del dominio fı́sico.
+							</p>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h3> RELACIÓN DE TRANSFORMACIÓN </h3>
+						<div>
+							<table>
+							  	<tr>
+							    	<th>Plano Fı́sico.</th>
+							    	<th> - </th>
+							    	<th>Plano Computacional.</th> 
+							  	</tr>
+							</table>							
+							<img width="400" height="400" data-src="resources/imgs/planoFisico.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/planoComputacional.jpg">							
+						</div>
+					</section>
+					<section>
+						<h3> RELACIÓN DE TRANSFORMACIÓN </h3>
+						<div>
+							\[\begin{gather*}
+							\xi=\xi(x,y),\eta=\eta(x,y)\\
+
+							\left[\begin{array}{cc}
+							\frac{\partial u}{\partial x} & \frac{\partial u}{\partial y}\\
+							\frac{\partial v}{\partial x} & \frac{\partial v}{\partial y}
+							\end{array}\right]=\left[\begin{array}{cc}
+							\frac{\partial u}{\partial\xi} & \frac{\partial u}{\partial\eta}\\
+							\frac{\partial v}{\partial\xi} & \frac{\partial v}{\partial\eta}
+							\end{array}\right]\left[\begin{array}{cc}
+							\frac{\partial\xi}{\partial x} & \frac{\partial\xi}{\partial y}\\
+							\frac{\partial\eta}{\partial x} & \frac{\partial\eta}{\partial y}
+							\end{array}\right]\\
+							\\
+							\end{gather*} \]
+						</div>
+					</section>
+					
+
+				</section>
+
+
+				<!-- *********************************************************************************** -->
+
+				<!-- PROBLEMA / GENERACIÓN DE MALLAS - WILBERT ***************************************** -->
+				<section>
+					<h1>SOBRE LOS MÉTODOS USADOS</h1>
+				</section>				
+
+				<section>
+
+					<div>
+						<h3> Métodos usados </h3>
+						<p>
+							El procedimiento que seguimos consiste de los siguientes 3 pasos:
+						</p>
+					</div>
+
+					<br>
+					<ol>
+						<li> Uso del generador algebraico de interpolación transfinita </li>
+						<li> Discretización de las ecuaciones del generador elíptico </li>
+						<li> Refinamiento iterativo de la malla</li>
+					</ol>		
+
+				</section>
+
+				<!-- ALG GENERATOR ********************************************************************-->
+				<section> 
+
+					<section> 
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+							<p>
+								Como paso inicial usamos este método de generación algebraico, el cuál
+								calcula los puntos dentro del grid/mesh como una interpolación entre las 
+								fronteras de la geometría.
+							</p>
+						</div>
+					</section>
+
+					<section> 
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+						</div>
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_alg_tfi.jpg" align="center">
+						</div>
+							
+					</section>
+
+					<section> 
+
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+
+							\[\begin{gather*}
+								x( \xi, \eta ) = ( 1 - \xi ) x_{l} + \xi x_{r} + ( 1 - \eta ) x_{b} + \eta x_{t} - ... \\
+												 ( 1 - \eta ) ( 1 - \xi ) x_{b}(0) - ( 1 - \xi ) \eta x_{t}(0) - ... \\
+												 ( 1 - \eta ) \xi x_{b}(1) - \eta \xi x_{t}(1)
+								\\
+								y( \xi, \eta ) = ( 1 - \xi ) y_{l} + \xi y_{r} + ( 1 - \eta ) y_{b} + \eta y_{t} - ... \\
+												 ( 1 - \eta ) ( 1 - \xi ) y_{b}(0) - ( 1 - \xi ) \eta y_{t}(0) - ... \\
+												 ( 1 - \eta ) \xi y_{b}(1) - \eta \xi y_{t}(1)
+							\end{gather*} \]
+
+						</div>
+
+					</section>
+
+					<section> 
+
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+						</div>
+
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_geometry.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/img_geometry_boundaries.jpg" align="right">
+							<p> Fronteras de la geometría </p>
+						</div>
+
+					</section>
+
+					<section> 
+
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+							<p>
+								Frontera en forma analítica como segmentos de recta
+							</p>
+						</div>
+
+						<div>
+							\[\begin{gather*}
+								x(q) = 
+								\begin{cases}
+									x_{i}(q) = x(i) + q \lbrace x(i + 1) - x(i) \rbrace
+								\end{cases}
+								\\
+								y(q) = 
+								\begin{cases}
+									y_{i}(q) = y(i) + q \lbrace y(i + 1) - y(i) \rbrace
+								\end{cases}
+								\\
+								q = {\xi, \eta}
+							\end{gather*} \]
+						</div>
+
+					</section>
+
+					<section> 
+
+						<div>
+							<h3>
+								Método algebraico de interpolación transfinita
+							</h3>
+							<p>
+								Malla obtenidas con el generador algebraico
+							</p>
+						</div>
+
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_alg_generator_size_10.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/img_alg_generator_size_30.jpg" align="right">
+						</div>
+
+					</section>
+
+				</section>
+
+				<!-- PDE GENERATOR ********************************************************************-->
+
+				<section>
+					
+					<section>
+						<div>
+							<h3>
+								Generador Elíptico
+							</h3>
+							<p>
+								Para refinar la malla generada por el método algebráico usamos este tipo de generador, el cuál se basa en definir un problema de frontera basado en una PDE
+								elíptica en el espacio x, y.
+							</p>
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Generador Elíptico
+							</h3>
+							<h4>
+								Problema de frontera
+							</h4>
+						</div>
+
+						<div>
+							<p>
+								Respecto al espacio físico
+							</p>
+							\[\begin{gather*}
+							%
+								\xi_{xx} + \xi_{yy} = 0 \\
+								\eta_{xx} + \eta_{yy} = 0 \\
+							%
+							\end{gather*} \]
+						</div>
+
+						<div>
+							<p>
+								Respecto al espacio de cómputo
+							</p>
+							\[\begin{gather*}
+								( x_{\eta \eta}^{2} + y_{\eta \eta}^{2} )x_{\xi \xi} 
+									- 2 ( x_{\xi} x_{\eta} + y_{\xi} y_{\eta} ) x_{\xi \eta}
+									+ ( x_{\xi \xi}^{2} + y_{\xi \xi}^{2} )x_{\eta \eta}
+								\\
+								( x_{\eta \eta}^{2} + y_{\eta \eta}^{2} )y_{\xi \xi} 
+									- 2 ( x_{\xi} x_{\eta} + y_{\xi} y_{\eta} ) y_{\xi \eta}
+									+ ( x_{\xi \xi}^{2} + y_{\xi \xi}^{2} )y_{\eta \eta}
+							\end{gather*} \]
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Generador Elíptico
+							</h3>
+							<h4>
+								Discretización
+							</h4>
+						</div>
+
+						\[\begin{gather*}
+							\alpha_{ij} ( x_{i+1,j} - 2 x_{i,j} + x_{i-1,j} ) + \gamma_{ij} ( x_{i, j + 1} - 2x_{i, j} + x_{i,j-1} ) - ... \\
+								 0.5 \beta_{ij} ( x_{i+1,j+1} - x_{i+1,j-1} - x_{i-1,j+1} + x_{i-1,j-1} ) = 0
+						\end{gather*} \]
+
+						\[\begin{gather*}
+							\alpha_{ij} ( y_{i+1,j} - 2 y_{i,j} + y_{i-1,j} ) + \gamma_{ij} ( y_{i, j + 1} - 2y_{i, j} + y_{i,j-1} ) - ... \\
+								 0.5 \beta_{ij} ( y_{i+1,j+1} - y_{i+1,j-1} - y_{i-1,j+1} + y_{i-1,j-1} ) = 0
+						\end{gather*} \]
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Generador Elíptico
+							</h3>
+							<h4>
+								Discretización
+							</h4>
+						</div>
+
+							\[\begin{gather*}
+							%
+								\xi = \frac{i}{N_{\xi}},\eta = \frac{j}{N_{\eta}}
+							%
+							\end{gather*} \]
+
+							\[\begin{gather*}
+							%
+								 \alpha_{ij} = 0.25 ( ( x_{i,j+1} - x_{i,j-1} )^{2} + (y_{i,j+1} - y_{i,j-1})^{2} )
+							\end{gather*} \]
+
+							\[\begin{gather*}
+								 \beta_{ij} = 0.25 ( ( x_{i,j+1} - x_{i,j-1} ) ( x_{i+1,j} - x_{i-1,j} ) + ... \\ ( y_{i,j+1} - y_{i,j-1} ) ( y_{i+1,j} - y_{i-1,j} ) )
+							\end{gather*} \]
+
+							\[\begin{gather*}
+								 \gamma_{ij} = 0.25 ( ( x_{i+1,j} - x_{i-1,j} )^{2} + (y_{i+1,j} - y_{i-1,j})^{2} )
+							%
+							\end{gather*} \]
+
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						
+						<div>
+							<h3>
+								Refinamiento iterativo
+							</h3>
+							<p>
+								De las ecuaciones discretizadas podemos formar un sistema lineal. Para esto hacemos uso de la iteración de picard para poder obtener las ecuaciones que describan en forma iterativa un sistema lineal.
+							</p>
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Refinamiento iterativo
+							</h3>
+							<p>
+								Iteración de Picard
+							</p>
+						</div>
+
+						\begin{gather*}
+							\alpha_{ij}^{k} ( x_{i+1,j}^{k+1} - 2 x_{i,j}^{k+1} + x_{i-1,j}^{k+1} ) + \gamma_{ij}^{k} ( x_{i, j + 1}^{k+1} - 2 x_{i, j}^{k+1} + x_{i,j-1}^{k+1} ) 
+						\end{gather*}
+
+						\begin{gather*}
+							-0.5 \beta_{ij}^{k} ( x_{i+1,j+1}^{k+1} - x_{i+1,j-1}^{k+1} - x_{i-1,j+1}^{k+1} + x_{i-1,j-1}^{k+1} ) = 0
+						\end{gather*}
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Refinamiento iterativo
+							</h3>
+							<p>
+								Stencil equivalente para generar la matriz del sistema lineal
+							</p>
+						</div>
+
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_stencil.jpg" align="center">
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Refinamiento iterativo
+							</h3>
+							<p>
+								Mallas resultantes luego de 10 iteraciones ( size 10 y 30 respectivamente )
+							</p>
+						</div>
+
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_elliptic_generator_size_10.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/img_elliptic_generator_size_30.jpg" align="right">
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								Refinamiento iterativo
+							</h3>
+							<p>
+								Mallas resultantes para el perfil de avión NACA0012 
+							</p>
+						</div>
+
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_airfoil_grid.jpg" align="center">
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								SOBRE EL SISTEMA LINEAL RESULTANTE
+							</h3>
+							<p>
+								Matriz resultante para el sistema discretizado para un grid de 3,3
+							</p>
+						</div>
+
+						<div>
+							<img width="700" height="400" data-src="resources/imgs/img_sys_matrix_3_3.jpg" align="center">
+						</div>
+
+					</section>
+
+					<section>
+						
+						<div>
+							<h3>
+								SOBRE EL SISTEMA LINEAL RESULTANTE
+							</h3>
+							<p>
+								Matriz resultante para el sistema discretizado para un grid de 4,4
+							</p>
+						</div>
+
+						<div>
+							<img width="900" height="400" data-src="resources/imgs/img_sys_matrix_4_4.jpg" align="center">
+						</div>
+
+					</section>
+
+				</section>
+
+				<!-- *********************************************************************************** -->		
+
+				<section> <!-- Este grupo de slides saldrán como verticales -->
+
+					<section>
+						<h1> Resultado y Conclusiones </h1>
+					</section>
+
+				</section>	
+
+				<section> <!-- Este grupo de slides saldrán como verticales -->
+
+					<section>
+						<p> En el desarrollo del presente trabajo verificamos la importancia de usar precondicionamiento al momento de resolver un sistema de ecuación lineal para la generación de una malla, para este propósito se uso el método de gauss seidel por bloque como matriz de precondicionamiento </p>
+					</section>
+
+				</section>				
+
+
+				<section> <!-- Este grupo de slides saldrán como verticales -->
+
+					<section>
+						
+						<div style="float: left; width: 45%">Gauss Seidel por Bloque
+							<img width="400" height="400" data-src="resources/imgs/img_elliptic_generator_size_bgs_30.jpg" align="left">
+							n° de iteraciones = 13
+						</div>
+						<div style="float: right; width: 45%">Gaus Seidel
+							<img width="400" height="400" data-src="resources/imgs/img_elliptic_generator_size_gs_30.jpg" align="left">
+							n° de iteraciones = 289
+						</div>
+						<div style="clear: both"></div>
+
+
+					</section>
+
+				</section>
+
+
+				<section> <!-- Este grupo de slides saldrán como verticales -->
+
+					<section>
+						<p>Se puede observar en la siguiente figura que ambas mallas son generadas correctamente con ambos métodos, con la diferencia que el método de gauss seidel por bloque converge con mucho menos iteraciones que el método de gauss seidel tradicional.</p>
+					</section>
+
+				</section>
+
+				<!-- *********************************************************************************** -->
+
+				<!-- 
+				<section>
+					<section>
+						<div>
+							<h3>Circle packing</h3>
+							<h7>An example</h7>
+						</div>
+						<div>
+							<img width="400" height="400" data-src="resources/imgs/img_circle_container_init.jpg" align="left">
+							<img width="400" height="400" data-src="resources/imgs/img_circle_container_result.jpg" align="right">
+						</div>
+					</section>
+					<section>
+						<div>
+							<h3>Circle packing</h3>
+							<h7>Mathematical formulation</h7>
+						</div>
+						<br>
+						<br>
+						<div>
+							\[\begin{gather*}
+							\textit{minimize } R \textit{ s.t }\\
+
+							\sqrt{ x_{i}^{2} + y_{i}^{2} } \leq R - r_{i}, 1 \leq i \leq n \\
+							\sqrt{ ( x_{i} - x_{j} )^{2} + ( y_{i} - y_{j} )^{2} } \geq r_{i} + r_{j}, 1 \leq i < j \leq n \\
+							\end{gather*} \]
+						</div>
+
+					</section>
+
+				</section>
+
+				<section>
+					<ol>
+						<li>Optimization</li>
+						<li>Diversification</li>
+						<li>Intensification</li>
+					</ol>
+				</section>
+
+				
+
+				<section>
+
+					<section>
+						<div>
+							\[\begin{gather*}
+							\textit{X: current circle configuration} \\
+							\textit{minimize } U(X)  \textit{ where :}\\
+
+							U(X) = \sum_{i=0}^{n-1} \sum_{j=i+1}^{n} 0.5 O_{ij}^{2} \\
+							O_{0j} = max \lbrace \sqrt{x_{j}^{2} + y_{j}^{2}} + r_{j} - R, 0 \rbrace \\
+							O_{ij} = max \lbrace r_{i} + r_{j} - \sqrt{ ( x_{i} - x_{j} )^{2} + ( y_{i} - y_{j} )^{2} } \rbrace \\
+
+							\end{gather*} \]
+						</div>
+					</section>
+
+					<section>
+						<div>
+							<img width="760" height="500" data-src="resources/gifs/optimization.gif" align="center">
+						</div>
+					</section>
+
+					<section>
+
+						<pre>
+							<code class="hljs" data-trim contenteditable="false">
+
+
+								// BS-GD optimizer
+								GradientDescent( pConfiguration );
+
+					            if ( !pConfiguration->isContainerFeasible() )
+					            {
+					                return;
+					            }
+
+
+					            // Do binary search to look for a better one
+					            int k = pConfiguration->getContainer().r / R_V;
+					            int _upBound = k - 1;
+					            int _loBound = 0;
+					            double _sum = 0.0;
+					            for ( int q = 0; q < pConfiguration->size; q++ )
+					            {
+					                double _frac = pConfiguration->getCircleByIndx( q ).r / R_V;
+					                _sum += _frac * _frac;
+					            }
+					            _loBound = floor( sqrt( _sum ) );
+
+					            do
+					            {
+					                if ( pConfiguration->isContainerFeasible() )
+					                {
+					                    _upBound = k - 1;
+					                }
+					                else
+					                {
+					                    _loBound = k;
+					                }
+
+					                k = ( _loBound + _upBound ) / 2;
+					                pConfiguration->getContainer().r = k * R_V;
+					                
+					                GradientDescent( pConfiguration );
+
+					            }while( _upBound > _loBound );
+							</code>
+							
+						</pre>
+					</section>
+
+				</section>
+
+				-->
+
+
+				<section>
+					<h1>GRACIAS POR SU ATENCIÓN</h1>
+				</section>	
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+
+				math: {
+					mathjax: 'resources/libs/MathJax/MathJax.js',
+					config: 'TeX-AMS_HTML-full'
+				},
+
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'lib/js/classList.js' },
+					{ src: 'plugin/math/math.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+
+			});
+		</script>
+	</body>
+</html>
+
