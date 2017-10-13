@@ -1,0 +1,158 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\title{Precondicionamiento y su utilidad en la generación de mallas con procesos iterativos}
+\author{\Large{Universidad Católica San Pablo}
+	\\ \large{Maestría en Ciencias de la Computación }
+}
+
+\begin{document}
+
+\maketitle
+
+
+\tableofcontents
+
+\section*{Introducción}
+
+El interes fundamental de este trabajo, se centra en mostrar maneras de como acelerar métodos iterativos para la solución numérica Ax = b, con la matriz A no singular de  $\mathbb{R}^{nxn}$ y  $ b\in\mathbb{R}^n$. la acelaración se consigue con precondicionamiento que será explicado con mas detalles es los siguientes puntos de este trabajo.  Con algún detalle, se consideran precondicionamientos basados en métodos iterativos estacionarios y en factorización LU incompleta
+
+Otro punto a tratar en este trabajo, es la importancia de los metodos iterativos en la generación de mallas, como caso particular se mostrará la generación de malla en 2D. La técnica fundamental para generar este tipo de malla, es la deformación de una malla cartesiana inicial y su posterior alineación con sus fronteras internas.
+
+
+\section{Precondicionamiento}
+
+\subsection{Historia}
+
+El término \textbf{precondicionamiento} parece haber sido utilizado por primera vez en 1948 por \textbf{Alan Turing}, en el artículo: \textit{El efecto de los errores de redondeo en los métodos de solución directa}. Sin embargo, el primer uso del término en relación con los métodos iterativos se encuentra en un documento de \textbf{D. Evans} sobre la aceleración que aplicaba el ruso \textbf{Chebyschev} en el método de SSOR en 1968.
+
+\textbf{Lamberto Cesari} en 1937 tenía un concepto de precondicionamiento como un medio para poder reducir el \textbf{número condicionante} y así mejorar la convergencia de un proceso iterativo, su idea fue usar un polinomio p(A) de bajo grado aplicada al sistema lineal 
+\[
+ Ax = b \tag{1} % \label{eq:1}
+\]
+
+así  \[ p(A)Ax = p(A)b \] sería un sistema lineal precondicionado, donde A es una matriz de orden $n$ simétrica y definida positiva.
+
+El precondicionar un sistema lineal es una de las principales fuentes para obtener resultados más eficientes computacionalmente. Es así que en los últimos años se ha desarrollado una mayor investigación con respecto a los métodos de solución directa e incluso sobre el subespacio de Krylov.
+
+
+\subsection{Formulación Matemática}
+
+El término \textbf{precondicionamiento} se refiere a transformar el sistema lineal $(1)$ en otro con propiedades más favorables en cuanto a la solución iterativa y que siga manteniendo la solución \textbf{x}. Un precondicionador es una matriz \textbf{M} que efectúa tal transformación. Para la matriz A del sistema (1), el número condicionante \textbf{cond(A)} se define como:
+
+\vspace{0.1cm}
+\[ 
+	cond(A) = ||A|| \hspace{0.1cm} ||A^{-1}||
+\]
+
+Luego de pre multiplicar al sistema lineal por la matriz \textbf{M} se debería verificar lo siquiente
+
+\[ 
+	 MAx = Mb \hspace{0.5cm}, \hspace{0.2cm} cond(MA) < cond(A) 
+\]
+
+Esta desigualdad es fundamental para garantizar al favorecimiento de los métodos iterativos, siempre que sea convergente. El mejor precondicionador para el sistema $(1)$ sería $M = A^{-1}$ pues con $cond(A^{-1}A) = cond(I) = 1$ sería el óptimo y así el sistema convergería en tan sólo una interación, pero el problema es calcular el coste computacional de  $A^{-1}$, esto equivaldría a calcular \textbf{$A^{-1}$} por algún método directo. Es por ello que se debe buscar un \textbf{$M \approx A^{-1}$} sin coste elevado.
+
+Para garantizar la convergencia de la matriz A, es suficiente mostrar que su radio espectral $\rho$ es menor a la unidad, matemáticamente  $\rho(A) < 1$. 
+
+Si en la ecuación $(1)$ hacemos $A = M - N$ donde $M$ es una matriz no singular, entonces
+
+\begin{center}
+\bgroup\obeylines
+$ (M - N)x = b $
+$  Mx = Nx + b $
+$  x = M^{-1}Nx + M^{-1}b $
+$  x = M^{-1}(M - A) + M^{-1}b $
+$  x = (I - M^{-1}A)x + M^{-1}b $
+\egroup
+\end{center}
+
+donde $I$ es la matriz indentidad de orden $n$. En este caso para que el sistema linea converja, se debe cumplir que $\rho(I - M^{-1}A) < 1$. Además mientras el radio espectral sea más cerca a cero entonces la velocidad de convergencia será mayor. 
+
+\vspace{0.2cm}
+Los precondicionadores deben cumplir principalmente dos propiedades:
+\begin{itemize}
+\item Facilidad de implementación (bajo coste computacional).
+\item Debe mejorar la convergencia del sistema lineal.
+\end{itemize}
+
+Cabe resaltar que los precondicionadores no solamente se obtienen multiplicando por una matriz a la izquierda, sino también por la derecha e incluso por ambos lados.
+
+\subsection{Principales Precondicionadores}
+
+Dentro de los precondicionadores podemos distinguir dos grupos: los explícitos y los implícitos.
+
+\begin{enumerate}
+\item \textbf{Precondicionadores Explícitos:} Se busca encontrar una matriz $M$ normalmente a partir de una factorización aproximada, como ejemplo de precondicionadores implícitos tenemos a Jacobi (diagonal), el SSOR, Gradiente Conjugado y las factorizaciones incompletas (Cholesky).
+
+\item \textbf{Precondicionadores Implícitos:} Se construyen calculando directamente $M \approx A^{-1}$, aquí se encuentran los precondicionadores polinomiales e inversa aproximada de $A$.
+\end{enumerate}
+ 
+
+\section{Métodos Iterativos}
+
+
+La importancia de los métodos iterativos en álgebra lineal se deriva de un simple hecho: los métodos directos requieren de $O(n^{3})$, mientras que los métodos iterativos pueden llegar a requerir solamente $O(n)$. Aunque los métodos iterativos requieren menos almacenamiento no tienen la fiabilidad de los métodos directos en cuanto a precisiones de solución se requiere. Es así que para matrices con $n > 10^{3}$ se va volviendo intratable el no pensar resolverlo con un algoritmo iterativo.
+
+En algunas aplicaciones, los métodos iterativos fallan y es donde el precondicionamiento es necesario, lamentablemente no siempre es suficiente, para lograr la convergencia en un tiempo razonable.
+Mientras que los métodos directos están practicamente basados en alguna actualización de la eliminación gaussiana, mientras que los métodos iterativos comprende una gran variedad de técnicas, que van desde métodos verdaderamente iterativos, como el Jacobi clásico, Gauss-Seidel e iteraciones $SOR$ al subespacio de Krylov , que teóricamente convergen en un número finito de pasos.
+
+Por ejemplo, cuando A es definida positiva y simétrica (hermitiana en el caso complejo) el método del Gradiente Conjugado resuelve el sistema $(1)$ muy rápido bajo ciertas condiciones con respecto a sus autovalores.
+
+
+\subsection{Precondicionadores}
+
+La velocidad de convergencia de los métodos iterativos depende de las propiedades espectrales de la matriz del sistema. Así si M es una matriz invertible que se aproxima de cierta manera a la matriz del sistema, A, los
+sistemas
+\[Ax = B\]
+\[M^{-1}Ax = M^{-1}B\]
+tienen las mismas soluciones. No obstante, es posible que las propiedades espectrales de $M^{-1}A$ sean más favorables que las de A. Al sistema
+\[M^{-1}Ax = M^{-1}B\]
+se le llama sistema precondicionado por la izquierda. Hay otras posibles estrategias para el precondicionado de un sistema como usar un precondicionador por la derecha o combinar iteraciones de distintos métodos iterativos.
+
+Una posible elección de M, que se denomina precondicionador del sistema, es el precondiconador de Jacobi donde M = diag(A).
+
+Otro tipo de precondicionadores, en general, más eficientes son los basados
+en descomposiciones LU incompletas de la matriz A.
+
+
+\section{Generación de Mallas}
+
+\subsection{Técnicas de discretización}
+
+...Método de Diferencias Finitas... Métodos de Elementos Finitos....
+
+\subsection{Tipos de Grillado}
+
+...Grillado estructurado (triangulares, rectangulares)...Grillado no estructurado...
+
+
+\begin{thebibliography}{10}
+\bibitem{Benzi} 
+MICHELE BENZI:
+\textit{Preconditioning Techniques for Large Linear
+Systems: A Survey - }
+Mathematics and Computer Science Department, Emory University, Atlanta, Georgias, 2002.
+ 
+\bibitem{Saad} 
+YOUSEF SAAD:
+\textit{Iterative Methods for Sparse Linear Systems - } 
+second Edition, 2000.
+ 
+\bibitem{Thompson} 
+JOE F. THOMPSON, BHARAT K. SONI, NIGEL P. WEATHERILL:
+\textit{Handbook of Grid Generation - }
+1999.
+
+\bibitem{Lloyd} 
+LLOYD N. TREFETHEN, DAVID BAU:
+\textit{Numerical Linear Algebra - }
+1997.
+
+\end{thebibliography}
+
+\end{document}
